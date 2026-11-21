@@ -417,12 +417,12 @@ body:has(.mask:not(.hide)) .toast{bottom:auto;top:calc(14px + env(safe-area-inse
   <div class="help">App gửi ảnh bill cho Google Gemini đọc. Khoá miễn phí, làm một lần:
     <ol>
       <li>Mở <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> và đăng nhập Gmail.</li>
-      <li>Bấm <b>Create API key</b>, chép khoá (bắt đầu bằng AIza…).</li>
+      <li>Bấm <b>Create API key</b>, chép khoá (bắt đầu bằng AQ. hoặc AIza…).</li>
       <li>Dán vào ô dưới rồi bấm Lưu khoá. Khoá chỉ nằm trên máy chủ của anh.</li>
     </ol>
   </div>
   <label class="fl" for="keyIn">Khoá API</label>
-  <input class="in2" id="keyIn" placeholder="AIza…" autocomplete="off">
+  <input class="in2" id="keyIn" placeholder="AQ.… hoặc AIza…" autocomplete="off">
   <div class="note" id="keyNote"></div>
   <div class="mb"><button class="d" id="keyDel">Xoá khoá</button><button data-close>Huỷ</button><button class="p" id="keySave">Lưu khoá</button></div>
 </div></div>
@@ -449,7 +449,7 @@ body:has(.mask:not(.hide)) .toast{bottom:auto;top:calc(14px + env(safe-area-inse
 <script>
 (function () {
   'use strict';
-  var VER = '21/11/2026-g';
+  var VER = '21/11/2026-h';
   var LS = 'thu-chi-gd', LS_REV = 'thu-chi-gd-review', LS_TH = 'thu-chi-gd-theme';
   var THEMES = [['muc', 'Xanh dương', '#2448a8'], ['ngoc', 'Ngọc bích', '#0b8a75'], ['dao', 'Hồng đào', '#d0396f'],
     ['tim', 'Tím', '#6741d9'], ['dat', 'Cam đất', '#c2561c'], ['la', 'Lá chuối', '#3f7d20']];
@@ -1221,7 +1221,8 @@ body:has(.mask:not(.hide)) .toast{bottom:auto;top:calc(14px + env(safe-area-inse
   $('mnKey').onclick = openKey;
   $('keySave').onclick = function () {
     var k = $('keyIn').value.trim();
-    if (!/^[\w\-]{20,}$/.test(k)) { $('keyNote').textContent = 'Khoá chưa đúng dạng, thường bắt đầu bằng AIza…'; return; }
+    k = k.replace(/\s+/g, '');
+    if (!/^[\w.\-]{20,}$/.test(k)) { $('keyNote').textContent = 'Khoá chưa đúng dạng. Khoá Gemini bắt đầu bằng AQ. hoặc AIza…'; return; }
     $('keySave').disabled = true; $('keyNote').innerHTML = '<span class="spin"></span>Đang kiểm tra khoá với Google…';
     callScript({ action: 'cfgSet', key: k }).then(function (j) {
       $('keySave').disabled = false;
