@@ -196,6 +196,53 @@ h2.sec button{border:0;background:none;color:var(--pri);font-weight:600;font-siz
 .top5 div{display:flex;justify-content:space-between;gap:10px;padding:8px 0}
 .top5 div+div{border-top:1px solid var(--line)}
 
+/* ================= lịch vạn niên ================= */
+#lcal{background:var(--card);border-radius:22px;padding:12px 10px 10px;margin:4px 0 12px;box-shadow:var(--sh)}
+.lc{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.lc .h{font-size:11.5px;color:var(--mut);text-align:center;padding-bottom:4px;font-weight:600}
+.lc .h.sun{color:var(--chi)}
+.lc button{position:relative;height:clamp(50px,13.5vw,58px);border:0;border-radius:12px;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:0;color:var(--ink)}
+.lc button:hover{background:var(--soft)}
+.lc button b{font-size:16px;font-weight:700;line-height:1.1}
+.lc button small{font-size:10.5px;color:var(--mut);line-height:1.1}
+.lc button.l1 small,.lc button.l15 small{color:var(--pri);font-weight:700}
+.lc button.sun b,.lc button.hol b{color:var(--chi)}
+.lc button.out{opacity:.35}
+.lc button.today{background:var(--priL)}
+.lc button.sel{background:var(--pri)}
+.lc button.sel b,.lc button.sel small{color:var(--priT)!important}
+.lc button i{position:absolute;top:5px;right:7px;width:7px;height:7px;border-radius:50%}
+.dinfo{background:var(--card);border-radius:22px;padding:18px;margin-bottom:12px;box-shadow:var(--sh)}
+.dinfo .top2{display:flex;gap:14px;align-items:center}
+.dinfo .big{width:64px;height:70px;border-radius:18px;background:var(--pri);color:var(--priT);display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none}
+.dinfo .big b{font-size:28px;font-weight:800;line-height:1}
+.dinfo .big span{font-size:11px;opacity:.85;margin-top:2px}
+.dinfo h3{margin:0;font-size:17px}
+.dinfo .lun{color:var(--pri);font-weight:600;font-size:14.5px}
+.dinfo .tags{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 0}
+.dinfo .tags span{background:var(--soft);border-radius:10px;padding:4px 10px;font-size:12.5px;color:var(--ink2)}
+.dinfo .tags span b{font-weight:600;color:var(--ink)}
+.dinfo .gio{font-size:13px;color:var(--mut);margin-top:12px;line-height:1.6}
+.dinfo .gio b{color:var(--ink2)}
+.dinfo .hl{margin-top:12px;display:grid;gap:8px}
+.dinfo .hl div{display:flex;gap:10px;align-items:center;font-weight:600;font-size:14px}
+.dinfo .hl .tile{width:32px;height:32px;border-radius:10px}
+.dinfo .hl .tile svg.i{width:16px;height:16px}
+.dinfo .add{margin-top:14px;border:0;background:var(--priL);color:var(--pri);border-radius:12px;padding:9px 14px;font-weight:700;font-size:13.5px;display:inline-flex;gap:6px;align-items:center}
+.dinfo .add svg.i{width:17px;height:17px}
+.li .when{text-align:right;white-space:nowrap}
+.li .when b{display:block;font-size:14px}
+.li .when small{font-size:12px;color:var(--mut)}
+.li .when b.soon{color:var(--chi)}
+.evb{background:var(--card);border-radius:22px;padding:14px;margin-bottom:12px;box-shadow:var(--sh);display:flex;gap:12px;align-items:flex-start;border-left:4px solid var(--c)}
+.evb .tile{width:42px;height:42px}
+.evb .m{flex:1;min-width:0}
+.evb b{display:block;font-size:15px}
+.evb small{display:block;color:var(--mut);font-size:13px}
+.evb .btns{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.two2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+select.in2{appearance:auto}
+
 /* ================= thanh dưới ================= */
 .nav{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:30;max-width:520px;margin:0 auto;background:var(--card);border-radius:24px;box-shadow:0 10px 30px -8px rgba(16,24,40,.25),0 0 0 1px var(--line);padding:6px}
 .nav .in{display:grid;grid-template-columns:1fr 1fr 76px 1fr 1fr;align-items:center}
@@ -309,6 +356,7 @@ body:has(.mask:not(.hide)) .toast{bottom:auto;top:calc(14px + env(safe-area-inse
       </div>
     </div>
     <button class="ib" id="btnSync" aria-label="Làm mới"><svg class="i" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/></svg></button>
+    <button class="ib" id="btnMenu" aria-label="Cài đặt"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </div>
 </header>
 
@@ -334,6 +382,7 @@ body:has(.mask:not(.hide)) .toast{bottom:auto;top:calc(14px + env(safe-area-inse
       <button class="qb" id="btnAdd"><span class="tile" style="--c:#12a150"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>Nhập tay</button>
       <button class="qb" id="btnBud"><span class="tile" style="--c:#f79009"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span>Ngân sách</button>
     </div>
+    <div id="evBanner"></div>
     <div id="queue"></div>
     <h2 class="sec"><span>Mới ghi</span><button id="goList">Xem cả sổ</button></h2>
     <div id="recent"></div>
@@ -347,6 +396,13 @@ body:has(.mask:not(.hide)) .toast{bottom:auto;top:calc(14px + env(safe-area-inse
   </section>
 
   <section id="vRep" class="hide"></section>
+
+  <section id="vCal" class="hide">
+    <div id="lcal"></div>
+    <div id="dayInfo"></div>
+    <h2 class="sec"><span>Ngày giỗ &amp; sự kiện</span><button id="evAdd">+ Thêm</button></h2>
+    <div id="evList"></div>
+  </section>
 </main>
 
 <nav class="nav hide" id="nav">
@@ -355,7 +411,7 @@ body:has(.mask:not(.hide)) .toast{bottom:auto;top:calc(14px + env(safe-area-inse
     <button data-v="list"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Sổ</button>
     <button class="cam" id="btnCam" aria-label="Chụp bill"><svg class="i" viewBox="0 0 24 24"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7H8l1.5-2h5L16 7h2.5A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.5"/></svg></button>
     <button data-v="rep"><svg class="i" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Báo cáo</button>
-    <button id="btnMenu"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Cài đặt</button>
+    <button data-v="cal"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 17.5h.01M12 17.5h.01"/></svg>Lịch</button>
   </div>
 </nav>
 <input type="file" id="fCam" accept="image/*" capture="environment" class="hide">
@@ -444,12 +500,133 @@ body:has(.mask:not(.hide)) .toast{bottom:auto;top:calc(14px + env(safe-area-inse
   <div class="mb"><button data-close>Huỷ</button><button class="p" id="catSave">Lưu danh mục</button></div>
 </div></div>
 
+<div class="mask hide" id="evM"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="evT">
+  <h2><span id="evT">Thêm ngày giỗ</span><button data-close aria-label="Đóng"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></h2>
+  <label class="fl" for="evN" style="margin-top:0">Tên</label>
+  <input class="in2" id="evN" autocomplete="off" placeholder="vd: Giỗ ông nội">
+  <label class="fl">Loại</label>
+  <div class="seg" id="evK" style="grid-template-columns:1fr 1fr 1fr"><button data-v="gio">Ngày giỗ</button><button data-v="sn">Sinh nhật</button><button data-v="khac">Khác</button></div>
+  <label class="fl">Theo lịch</label>
+  <div class="seg" id="evCal"><button data-v="am">Âm lịch</button><button data-v="duong">Dương lịch</button></div>
+  <div class="two2"><div><label class="fl" for="evD">Ngày</label><select class="in2" id="evD"></select></div><div><label class="fl" for="evMo">Tháng</label><select class="in2" id="evMo"></select></div></div>
+  <label class="fl" for="evY" id="evYL">Năm mất (không bắt buộc)</label>
+  <input class="in2" id="evY" inputmode="numeric" maxlength="4" placeholder="vd: 2015">
+  <label class="fl">Nhắc trên trang Wallet trước</label>
+  <div class="dq" id="evR"><button data-r="0">Không nhắc</button><button data-r="1">1 ngày</button><button data-r="3">3 ngày</button><button data-r="7">1 tuần</button><button data-r="14">2 tuần</button></div>
+  <label class="fl" for="evNote">Ghi chú</label>
+  <input class="in2" id="evNote" autocomplete="off" placeholder="vd: làm 3 mâm cỗ, mời họ nội">
+  <div class="note" id="evPrev"></div>
+  <div class="mb"><button class="d hide" id="evDel">Xoá</button><button data-close>Huỷ</button><button class="p" id="evSave">Lưu</button></div>
+</div></div>
+
 <div class="toast hide" id="toast" role="status"></div>
 
 <script>
+/* Âm lịch Việt Nam – thuật toán Hồ Ngọc Đức (múi giờ +7) */
+var AL = (function () {
+  var PI = Math.PI, TZ = 7;
+  function INT(d) { return Math.floor(d); }
+  function jdFromDate(dd, mm, yy) {
+    var a = INT((14 - mm) / 12), y = yy + 4800 - a, m = mm + 12 * a - 3;
+    var jd = dd + INT((153 * m + 2) / 5) + 365 * y + INT(y / 4) - INT(y / 100) + INT(y / 400) - 32045;
+    if (jd < 2299161) jd = dd + INT((153 * m + 2) / 5) + 365 * y + INT(y / 4) - 32083;
+    return jd;
+  }
+  function jdToDate(jd) {
+    var a, b, c;
+    if (jd > 2299160) { a = jd + 32044; b = INT((4 * a + 3) / 146097); c = a - INT((b * 146097) / 4); }
+    else { b = 0; c = jd + 32082; }
+    var d = INT((4 * c + 3) / 1461), e = c - INT((1461 * d) / 4), m = INT((5 * e + 2) / 153);
+    return [e - INT((153 * m + 2) / 5) + 1, m + 3 - 12 * INT(m / 10), b * 100 + d - 4800 + INT(m / 10)];
+  }
+  function NewMoon(k) {
+    var T = k / 1236.85, T2 = T * T, T3 = T2 * T, dr = PI / 180;
+    var Jd1 = 2415020.75933 + 29.53058868 * k + 0.0001178 * T2 - 0.000000155 * T3;
+    Jd1 = Jd1 + 0.00033 * Math.sin((166.56 + 132.87 * T - 0.009173 * T2) * dr);
+    var M = 359.2242 + 29.10535608 * k - 0.0000333 * T2 - 0.00000347 * T3;
+    var Mpr = 306.0253 + 385.81691806 * k + 0.0107306 * T2 + 0.00001236 * T3;
+    var F = 21.2964 + 390.67050646 * k - 0.0016528 * T2 - 0.00000239 * T3;
+    var C1 = (0.1734 - 0.000393 * T) * Math.sin(M * dr) + 0.0021 * Math.sin(2 * dr * M);
+    C1 = C1 - 0.4068 * Math.sin(Mpr * dr) + 0.0161 * Math.sin(dr * 2 * Mpr);
+    C1 = C1 - 0.0004 * Math.sin(dr * 3 * Mpr);
+    C1 = C1 + 0.0104 * Math.sin(dr * 2 * F) - 0.0051 * Math.sin(dr * (M + Mpr));
+    C1 = C1 - 0.0074 * Math.sin(dr * (M - Mpr)) + 0.0004 * Math.sin(dr * (2 * F + M));
+    C1 = C1 - 0.0004 * Math.sin(dr * (2 * F - M)) - 0.0006 * Math.sin(dr * (2 * F + Mpr));
+    C1 = C1 + 0.0010 * Math.sin(dr * (2 * F - Mpr)) + 0.0005 * Math.sin(dr * (2 * Mpr + M));
+    var deltat = T < -11 ? 0.001 + 0.000839 * T + 0.0002261 * T2 - 0.00000845 * T3 - 0.000000081 * T * T3 : -0.000278 + 0.000265 * T + 0.000262 * T2;
+    return Jd1 + C1 - deltat;
+  }
+  function SunLongitude(jdn) {
+    var T = (jdn - 2451545.0) / 36525, T2 = T * T, dr = PI / 180;
+    var M = 357.52910 + 35999.05030 * T - 0.0001559 * T2 - 0.00000048 * T * T2;
+    var L0 = 280.46645 + 36000.76983 * T + 0.0003032 * T2;
+    var DL = (1.914600 - 0.004817 * T - 0.000014 * T2) * Math.sin(dr * M);
+    DL = DL + (0.019993 - 0.000101 * T) * Math.sin(dr * 2 * M) + 0.000290 * Math.sin(dr * 3 * M);
+    var L = (L0 + DL) * dr;
+    return L - PI * 2 * INT(L / (PI * 2));
+  }
+  function sunLong6(dn) { return INT(SunLongitude(dn - 0.5 - TZ / 24) / PI * 6); }
+  function newMoonDay(k) { return INT(NewMoon(k) + 0.5 + TZ / 24); }
+  function month11(yy) {
+    var k = INT((jdFromDate(31, 12, yy) - 2415021) / 29.530588853), nm = newMoonDay(k);
+    return sunLong6(nm) >= 9 ? newMoonDay(k - 1) : nm;
+  }
+  function leapOffset(a11) {
+    var k = INT((a11 - 2415021.076998695) / 29.530588853 + 0.5), last, i = 1, arc = sunLong6(newMoonDay(k + i));
+    do { last = arc; i++; arc = sunLong6(newMoonDay(k + i)); } while (arc !== last && i < 14);
+    return i - 1;
+  }
+  // dương → âm: [ngày, tháng, năm, nhuận]
+  function s2l(dd, mm, yy) {
+    var dn = jdFromDate(dd, mm, yy), k = INT((dn - 2415021.076998695) / 29.530588853);
+    var ms = newMoonDay(k + 1); if (ms > dn) ms = newMoonDay(k);
+    var a11 = month11(yy), b11 = a11, ly;
+    if (a11 >= ms) { ly = yy; a11 = month11(yy - 1); } else { ly = yy + 1; b11 = month11(yy + 1); }
+    var ld = dn - ms + 1, diff = INT((ms - a11) / 29), leap = 0, lm = diff + 11;
+    if (b11 - a11 > 365) { var lo = leapOffset(a11); if (diff >= lo) { lm = diff + 10; if (diff === lo) leap = 1; } }
+    if (lm > 12) lm -= 12;
+    if (lm >= 11 && diff < 4) ly -= 1;
+    return [ld, lm, ly, leap];
+  }
+  // âm → dương: [ngày, tháng, năm] (0 nếu không có)
+  function l2s(ld, lm, ly, leap) {
+    var a11, b11;
+    if (lm < 11) { a11 = month11(ly - 1); b11 = month11(ly); } else { a11 = month11(ly); b11 = month11(ly + 1); }
+    var k = INT(0.5 + (a11 - 2415021.076998695) / 29.530588853), off = lm - 11;
+    if (off < 0) off += 12;
+    if (b11 - a11 > 365) {
+      var lo = leapOffset(a11), lmn = lo - 2; if (lmn < 0) lmn += 12;
+      if (leap && lm !== lmn) return [0, 0, 0];
+      if (leap || off >= lo) off += 1;
+    }
+    return jdToDate(newMoonDay(k + off) + ld - 1);
+  }
+  var CAN = ['Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ', 'Canh', 'Tân', 'Nhâm', 'Quý'];
+  var CHI = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
+  var TK = ['Xuân phân', 'Thanh minh', 'Cốc vũ', 'Lập hạ', 'Tiểu mãn', 'Mang chủng', 'Hạ chí', 'Tiểu thử', 'Đại thử', 'Lập thu', 'Xử thử', 'Bạch lộ',
+    'Thu phân', 'Hàn lộ', 'Sương giáng', 'Lập đông', 'Tiểu tuyết', 'Đại tuyết', 'Đông chí', 'Tiểu hàn', 'Đại hàn', 'Lập xuân', 'Vũ thủy', 'Kinh trập'];
+  var GIO_HD = ['110100101100', '001101001011', '110011010010', '101100110100', '001011001101', '010010110011'];
+  function info(dd, mm, yy) {
+    var l = s2l(dd, mm, yy), jd = jdFromDate(dd, mm, yy), dc = (jd + 1) % 12, hd = [];
+    var g = GIO_HD[dc % 6];
+    for (var i = 0; i < 12; i++) if (g.charAt(i) === '1') hd.push(CHI[i] + ' (' + ((i * 2 + 23) % 24) + '–' + ((i * 2 + 1) % 24) + 'h)');
+    return {
+      d: l[0], m: l[1], y: l[2], leap: l[3],
+      canChiNgay: CAN[(jd + 9) % 10] + ' ' + CHI[dc],
+      canChiThang: CAN[(l[2] * 12 + l[1] + 3) % 10] + ' ' + CHI[(l[1] + 1) % 12],
+      canChiNam: CAN[(l[2] + 6) % 10] + ' ' + CHI[(l[2] + 8) % 12],
+      tietKhi: TK[INT(SunLongitude(jd - 0.5 - TZ / 24 + 1) / PI * 12)],
+      gioHD: hd
+    };
+  }
+  function yearName(ly) { return CAN[(ly + 6) % 10] + ' ' + CHI[(ly + 8) % 12]; }
+  return { s2l: s2l, l2s: l2s, info: info, yearName: yearName, jd: jdFromDate };
+})();
+</script>
+<script>
 (function () {
   'use strict';
-  var VER = '21/11/2026-h';
+  var VER = '21/11/2026-i';
   var LS = 'thu-chi-gd', LS_REV = 'thu-chi-gd-review', LS_TH = 'thu-chi-gd-theme';
   var THEMES = [['muc', 'Xanh dương', '#2448a8'], ['ngoc', 'Ngọc bích', '#0b8a75'], ['dao', 'Hồng đào', '#d0396f'],
     ['tim', 'Tím', '#6741d9'], ['dat', 'Cam đất', '#c2561c'], ['la', 'Lá chuối', '#3f7d20']];
@@ -498,7 +675,11 @@ body:has(.mask:not(.hide)) .toast{bottom:auto;top:calc(14px + env(safe-area-inse
     lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
     phone: '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',
     link: '<path d="M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1"/>',
-    out: '<path d="M9 21H5V3h4M16 17l5-5-5-5M21 12H9"/>'
+    out: '<path d="M9 21H5V3h4M16 17l5-5-5-5M21 12H9"/>',
+    candle: '<path d="M12 3c1.6 1.9 1.6 3.5 0 4.6-1.6-1.1-1.6-2.7 0-4.6z"/><rect x="9" y="9.5" width="6" height="11" rx="1"/><path d="M5 21h14"/>',
+    cake: '<path d="M4 21h16M5 21v-7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7M5 16c2.3 1.5 4.7 1.5 7 0s4.7-1.5 7 0M12 12V8.5"/><path d="M12 4.5c.9.9.9 2 0 2.6-.9-.6-.9-1.7 0-2.6z"/>',
+    cal: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    flag: '<path d="M5 21V4h11l-2 4 2 4H5"/>'
   };
   function ic(k) { return '<svg class="i" viewBox="0 0 24 24" aria-hidden="true">' + (IC[k] || IC.more) + '</svg>'; }
   function tile(k, col, cls) { return '<span class="tile' + (cls ? ' ' + cls : '') + '" style="--c:' + col + '">' + ic(k) + '</span>'; }
@@ -531,10 +712,11 @@ body:has(.mask:not(.hide)) .toast{bottom:auto;top:calc(14px + env(safe-area-inse
   var S = {
     rows: cfg.rows || [], cats: cfg.cats || { chi: ['Chi khác'], thu: ['Thu khác'] }, hasKey: !!cfg.hasKey, budget: cfg.budget || { total: 0, cats: {} },
     mode: 'm', ym: todayVN().slice(0, 7), y: todayVN().slice(0, 4), view: 'home', q: '', fc: '', ft: '', fd: '', limit: 60,
-    queue: [], review: localStorage.getItem(LS_REV) === '1', srvVer: ''
+    queue: [], review: localStorage.getItem(LS_REV) === '1', srvVer: '',
+    events: cfg.events || [], cm: todayVN().slice(0, 7), cd: todayVN()
   };
   function saveCfg() {
-    cfg.rows = S.rows.filter(function (r) { return !r._tmp; }); cfg.cats = S.cats; cfg.hasKey = S.hasKey; cfg.budget = S.budget;
+    cfg.rows = S.rows.filter(function (r) { return !r._tmp; }); cfg.cats = S.cats; cfg.hasKey = S.hasKey; cfg.budget = S.budget; cfg.events = S.events;
     try { localStorage.setItem(LS, JSON.stringify(cfg)); } catch (e) {}
   }
 
@@ -577,7 +759,7 @@ body:has(.mask:not(.hide)) .toast{bottom:auto;top:calc(14px + env(safe-area-inse
       var tmp = S.rows.filter(function (r) { return r._tmp; }), ids = {};
       j.rows.forEach(function (r) { ids[r.id] = 1; });
       S.rows = j.rows.concat(tmp.filter(function (r) { return !ids[r.id]; }));
-      S.cats = j.cats; S.hasKey = j.hasKey; S.srvVer = j.ver || ''; if (j.budget) S.budget = j.budget;
+      S.cats = j.cats; S.hasKey = j.hasKey; S.srvVer = j.ver || ''; if (j.budget) S.budget = j.budget; if (j.events) S.events = j.events;
       saveCfg(); render();
     }).catch(function (e) { loading = false; $('btnSync').style.opacity = ''; if (!quiet) toast(netErr(e)); });
   }
@@ -610,10 +792,10 @@ body:has(.mask:not(.hide)) .toast{bottom:auto;top:calc(14px + env(safe-area-inse
   function inPer(r) { return S.mode === 'm' ? r.d.slice(0, 7) === S.ym : r.d.slice(0, 4) === S.y; }
   function shiftYm(ym, k) { var y = +ym.slice(0, 4), m = +ym.slice(5, 7) - 1 + k; y += Math.floor(m / 12); m = ((m % 12) + 12) % 12; return y + '-' + ('0' + (m + 1)).slice(-2); }
   function perLabel() { return S.mode === 'm' ? 'Tháng ' + (+S.ym.slice(5)) + '/' + S.ym.slice(0, 4) : 'Năm ' + S.y; }
-  function go(k) { if (S.mode === 'm') S.ym = shiftYm(S.ym, k); else S.y = String(+S.y + k); S.limit = 60; S.fd = ''; render(); }
+  function go(k) { if (S.view === 'cal') { S.cm = shiftYm(S.cm, k); render(); return; } if (S.mode === 'm') S.ym = shiftYm(S.ym, k); else S.y = String(+S.y + k); S.limit = 60; S.fd = ''; render(); }
   $('pPrev').onclick = function () { go(-1); };
   $('pNext').onclick = function () { go(1); };
-  $('pLbl').onclick = function () { if (S.mode === 'm') { S.mode = 'y'; S.y = S.ym.slice(0, 4); } else { S.mode = 'm'; S.ym = S.y === todayVN().slice(0, 4) ? todayVN().slice(0, 7) : S.y + '-12'; } S.fd = ''; render(); };
+  $('pLbl').onclick = function () { if (S.view === 'cal') { S.cm = todayVN().slice(0, 7); S.cd = todayVN(); render(); return; } if (S.mode === 'm') { S.mode = 'y'; S.y = S.ym.slice(0, 4); } else { S.mode = 'm'; S.ym = S.y === todayVN().slice(0, 4) ? todayVN().slice(0, 7) : S.y + '-12'; } S.fd = ''; render(); };
 
   /* ---------- mục (có mục con "Nhóm / Mục con") ---------- */
   function grp(c) { return String(c || '').split(' / ')[0]; }
@@ -641,15 +823,16 @@ body:has(.mask:not(.hide)) .toast{bottom:auto;top:calc(14px + env(safe-area-inse
   function monthRows(ym) { return S.rows.filter(function (r) { return r.d.slice(0, 7) === ym; }); }
 
   /* ---------- vẽ ---------- */
-  var TITLES = { home: 'Wallet', list: 'Sổ thu chi', rep: 'Báo cáo' };
+  var TITLES = { home: 'Wallet', list: 'Sổ thu chi', rep: 'Báo cáo', cal: 'Lịch' };
   function render() {
     $('vTitle').textContent = TITLES[S.view];
-    $('pLbl').textContent = perLabel();
+    if (S.view === 'cal') $('pLbl').textContent = 'Tháng ' + (+S.cm.slice(5)) + '/' + S.cm.slice(0, 4);
+    else $('pLbl').textContent = perLabel();
     $('verC').textContent = VER;
     document.querySelectorAll('#nav [data-v]').forEach(function (b) { b.classList.toggle('on', b.dataset.v === S.view); });
-    ['home', 'list', 'rep'].forEach(function (v) { $('v' + v.charAt(0).toUpperCase() + v.slice(1)).classList.toggle('hide', S.view !== v); });
+    ['home', 'list', 'rep', 'cal'].forEach(function (v) { $('v' + v.charAt(0).toUpperCase() + v.slice(1)).classList.toggle('hide', S.view !== v); });
     var rows = S.rows.filter(inPer);
-    if (S.view === 'home') renderHome(rows); else if (S.view === 'list') renderList(rows); else renderRep(rows);
+    if (S.view === 'home') renderHome(rows); else if (S.view === 'list') renderList(rows); else if (S.view === 'cal') renderLunar(); else renderRep(rows);
     renderQueue();
   }
   $('nav').onclick = function (e) { var b = e.target.closest('[data-v]'); if (!b) return; S.view = b.dataset.v; render(); window.scrollTo(0, 0); };
@@ -685,6 +868,7 @@ body:has(.mask:not(.hide)) .toast{bottom:auto;top:calc(14px + env(safe-area-inse
     h += '<div class="stats">' + st('Thu vào', '#6ee7a8', T.thu) + (T.inv ? st('Đầu tư', '#c4b5fd', T.inv) : '') + st('Còn lại', '', left) + '</div>';
     $('hero').innerHTML = h;
     if ($('hSetB')) $('hSetB').onclick = openBud;
+    renderEvBanner();
     var rec = S.rows.filter(inPer).sort(function (a, b) { return b.d < a.d ? -1 : b.d > a.d ? 1 : 0; }).slice(0, 6);
     $('recent').innerHTML = rec.length ? '<div class="lst">' + rec.map(liHtml).join('') + '</div>' :
       '<div class="empty">Chưa có khoản nào trong ' + esc(perLabel().toLowerCase()) + '.<br>Bấm nút <b>chụp</b> ở giữa thanh dưới, chụp hoá đơn là app tự ghi.</div>';
@@ -878,6 +1062,167 @@ body:has(.mask:not(.hide)) .toast{bottom:auto;top:calc(14px + env(safe-area-inse
   }
   $('vRep').onclick = function (e) { var b = e.target.closest('[data-c]'); if (!b) return; S.fc = b.dataset.c; S.fd = ''; S.view = 'list'; render(); window.scrollTo(0, 0); };
 
+  /* ---------- lịch vạn niên & ngày giỗ ---------- */
+  var HOL_S = { '1-1': 'Tết Dương lịch', '14-2': 'Lễ Tình nhân', '8-3': 'Quốc tế Phụ nữ', '30-4': 'Ngày Giải phóng miền Nam', '1-5': 'Quốc tế Lao động', '1-6': 'Quốc tế Thiếu nhi',
+    '2-9': 'Quốc khánh', '20-10': 'Ngày Phụ nữ Việt Nam', '20-11': 'Ngày Nhà giáo Việt Nam', '22-12': 'Ngày Quân đội nhân dân', '24-12': 'Đêm Giáng sinh' };
+  var HOL_L = { '1-1': 'Tết Nguyên đán', '2-1': 'Mùng 2 Tết', '3-1': 'Mùng 3 Tết', '15-1': 'Rằm tháng Giêng', '10-3': 'Giỗ Tổ Hùng Vương', '15-4': 'Lễ Phật đản',
+    '5-5': 'Tết Đoan ngọ', '15-7': 'Lễ Vu lan', '15-8': 'Tết Trung thu', '23-12': 'Ông Công Ông Táo', '30-12': 'Giao thừa' };
+  var EVK = { gio: ['candle', '#b54708', 'Ngày giỗ'], sn: ['cake', '#ee46bc', 'Sinh nhật'], khac: ['flag', '#2e90fa', 'Sự kiện'] };
+  var LMN = ['', 'Giêng', 'Hai', 'Ba', 'Tư', 'Năm', 'Sáu', 'Bảy', 'Tám', 'Chín', 'Mười', 'Một', 'Chạp'];
+  var WDF = ['Chủ nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+  function pa(iso) { return [+iso.slice(8, 10), +iso.slice(5, 7), +iso.slice(0, 4)]; }
+  function isoOf(d, m, y) { return y + '-' + ('0' + m).slice(-2) + '-' + ('0' + d).slice(-2); }
+  var lunC = {};
+  function lunarOf(iso) { if (!lunC[iso]) { var p = pa(iso); lunC[iso] = AL.s2l(p[0], p[1], p[2]); } return lunC[iso]; } // [ngày, tháng, năm, nhuận]
+  function lunTxt(l, full) { return l[0] + '/' + l[1] + (l[3] ? ' nhuận' : '') + (full ? ' năm ' + AL.yearName(l[2]) : '') + ' âm'; }
+  function dayDiff(a, b) { return Math.round((Date.parse(b) - Date.parse(a)) / 864e5); }
+  // ngày dương của ngày âm d/m năm âm ly (tháng thiếu không có ngày 30 → lấy 29)
+  function l2iso(d, m, ly) {
+    var s = AL.l2s(d, m, ly, 0); if (!s[0]) return '';
+    var iso = isoOf(s[0], s[1], s[2]), back = lunarOf(iso);
+    if (d === 30 && (back[0] !== 30 || back[1] !== m)) { s = AL.l2s(29, m, ly, 0); iso = isoOf(s[0], s[1], s[2]); }
+    return iso;
+  }
+  function occIn(ev, yr) {
+    if (ev.cal === 'duong') return isoOf(Math.min(ev.d, dim(yr + '-' + ('0' + ev.m).slice(-2))), ev.m, yr);
+    return l2iso(ev.d, ev.m, yr);
+  }
+  function nextOcc(ev, from) {
+    from = from || todayVN();
+    var base = ev.cal === 'duong' ? +from.slice(0, 4) : lunarOf(from)[2];
+    for (var k = -1; k <= 1; k++) { var iso = occIn(ev, base + k); if (iso && iso >= from) return { iso: iso, yr: base + k, days: dayDiff(from, iso) }; }
+    return null;
+  }
+  function evNth(ev, yr) {
+    if (!ev.y || yr <= ev.y) return '';
+    return ev.k === 'gio' ? 'giỗ lần thứ ' + (yr - ev.y) : ev.k === 'sn' ? 'tròn ' + (yr - ev.y) + ' tuổi' : (yr - ev.y) + ' năm';
+  }
+  function evDate(ev) { return ev.cal === 'am' ? ev.d + '/' + ev.m + ' âm lịch' : ev.d + '/' + ev.m + ' dương lịch'; }
+  function evsOn(iso) {
+    var p = pa(iso), l = lunarOf(iso);
+    return S.events.filter(function (e) {
+      if (e.cal === 'duong') return e.d === p[0] && e.m === p[1];
+      if (l[3] || e.m !== l[1]) return false;
+      if (e.d === l[0]) return true;
+      return e.d === 30 && l[0] === 29 && lunarOf(addDays(iso, 1))[0] === 1; // tháng thiếu
+    });
+  }
+  function soonTxt(n) { return n === 0 ? 'Hôm nay' : n === 1 ? 'Ngày mai' : n === 2 ? 'Ngày kia' : 'Còn ' + n + ' ngày'; }
+  function wdFull(iso) { return WDF[new Date(iso + 'T00:00:00Z').getUTCDay()]; }
+
+  function renderEvBanner() {
+    var h = '';
+    S.events.map(function (e) { return { e: e, o: nextOcc(e) }; }).filter(function (x) { return x.o && (x.o.days === 0 || (x.e.r && x.o.days <= x.e.r)); })
+      .sort(function (a, b) { return a.o.days - b.o.days; }).slice(0, 3).forEach(function (x) {
+        var k = EVK[x.e.k] || EVK.khac, l = lunarOf(x.o.iso), nth = evNth(x.e, x.o.yr);
+        h += '<div class="evb" style="--c:' + k[1] + '">' + tile(k[0], k[1]) + '<div class="m"><b>' + esc(x.e.n) + ': ' + soonTxt(x.o.days).toLowerCase() + '</b>' +
+          '<small>' + wdFull(x.o.iso) + ', ' + dmy(x.o.iso) + ' (' + lunTxt(l) + ')' + (nth ? ', ' + nth : '') + '</small>' + (x.e.note ? '<small>' + esc(x.e.note) + '</small>' : '') +
+          '<div class="btns"><button class="sb p" data-evspend="' + esc(x.e.id) + '">Ghi chi phí</button><button class="sb" data-evgo="' + x.o.iso + '">Xem lịch</button></div></div></div>';
+      });
+    $('evBanner').innerHTML = h;
+  }
+  $('evBanner').onclick = function (e) {
+    var b = e.target.closest('[data-evspend],[data-evgo]'); if (!b) return;
+    if (b.dataset.evgo) { S.view = 'cal'; S.cd = b.dataset.evgo; S.cm = S.cd.slice(0, 7); render(); window.scrollTo(0, 0); return; }
+    var ev = S.events.find(function (x) { return x.id === b.dataset.evspend; }); if (!ev) return;
+    var c = S.cats.chi.find(function (x) { return /hieu|bieu/.test(norm(x)); }) || S.cats.chi[S.cats.chi.length - 1];
+    openEd(null, { pre: { t: 'chi', c: c, n: ev.n } });
+  };
+
+  function renderLunar() {
+    var ym = S.cm, D = dim(ym), t = todayVN(), first = (new Date(ym + '-01T00:00:00Z').getUTCDay() + 6) % 7;
+    var h = '<div class="lc">' + ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'].map(function (x, i) { return '<div class="h' + (i === 6 ? ' sun' : '') + '">' + x + '</div>'; }).join('');
+    var start = addDays(ym + '-01', -first), cells = Math.ceil((first + D) / 7) * 7;
+    for (var i = 0; i < cells; i++) {
+      var iso = addDays(start, i), p = pa(iso), l = lunarOf(iso), evs = evsOn(iso);
+      var hol = HOL_S[p[0] + '-' + p[1]] || (!l[3] && HOL_L[l[0] + '-' + l[1]]);
+      var cls = (iso.slice(0, 7) !== ym ? 'out ' : '') + (iso === t ? 'today ' : '') + (iso === S.cd ? 'sel ' : '') + (i % 7 === 6 ? 'sun ' : '') + (hol && /Tết|Quốc khánh|Giải phóng|Lao động|Hùng/.test(hol) ? 'hol ' : '') + (l[0] === 1 ? 'l1 ' : '') + (l[0] === 15 ? 'l15' : '');
+      h += '<button data-d="' + iso + '" class="' + cls + '" aria-label="' + p[0] + '/' + p[1] + ', âm lịch ' + l[0] + '/' + l[1] + (evs.length ? ', ' + esc(evs.map(function (e) { return e.n; }).join(', ')) : '') + '">' +
+        (evs.length ? '<i style="background:' + (EVK[evs[0].k] || EVK.khac)[1] + '"></i>' : '') + '<b>' + p[0] + '</b><small>' + (l[0] === 1 ? '1/' + l[1] + (l[3] ? 'n' : '') : l[0]) + '</small></button>';
+    }
+    $('lcal').innerHTML = h + '</div>';
+    // chi tiết ngày đang chọn
+    var d = S.cd, P = pa(d), L = lunarOf(d), I = AL.info(P[0], P[1], P[2]), evs = evsOn(d);
+    var hl = [HOL_S[P[0] + '-' + P[1]], !L[3] && HOL_L[L[0] + '-' + L[1]], L[0] === 1 && !HOL_L[L[0] + '-' + L[1]] ? 'Mùng 1 đầu tháng' : '', L[0] === 15 && !HOL_L[L[0] + '-' + L[1]] ? 'Ngày rằm' : ''].filter(Boolean);
+    var x = '<div class="dinfo"><div class="top2"><div class="big"><b>' + P[0] + '</b><span>Tháng ' + P[1] + '</span></div><div><h3>' + wdFull(d) + ', ' + dmy(d) + '</h3>' +
+      '<div class="lun">Ngày ' + L[0] + ' tháng ' + (LMN[L[1]] || L[1]) + (L[3] ? ' nhuận' : '') + ' năm ' + AL.yearName(L[2]) + '</div>' +
+      (d !== t ? '<small style="color:var(--mut)">' + (d > t ? 'Còn ' + dayDiff(t, d) + ' ngày nữa' : dayDiff(d, t) + ' ngày trước') + '</small>' : '<small style="color:var(--mut)">Hôm nay</small>') + '</div></div>' +
+      '<div class="tags"><span>Ngày <b>' + I.canChiNgay + '</b></span><span>Tháng <b>' + I.canChiThang + '</b></span><span>Năm <b>' + I.canChiNam + '</b></span><span>Tiết <b>' + I.tietKhi + '</b></span></div>' +
+      '<div class="gio"><b>Giờ hoàng đạo:</b> ' + I.gioHD.join(', ') + '</div>';
+    if (hl.length || evs.length) {
+      x += '<div class="hl">' + hl.map(function (n) { return '<div>' + tile('flag', '#e5484d') + n + '</div>'; }).join('') +
+        evs.map(function (e) { var k = EVK[e.k] || EVK.khac, nth = evNth(e, e.cal === 'am' ? L[2] : P[2]); return '<div data-ev="' + esc(e.id) + '" style="cursor:pointer">' + tile(k[0], k[1]) + '<span>' + esc(e.n) + (nth ? ' <small style="font-weight:500;color:var(--mut)">(' + nth + ')</small>' : '') + '</span></div>'; }).join('') + '</div>';
+    }
+    x += '<button class="add" id="evAddDay">' + ic('candle') + 'Đặt ngày giỗ vào ngày ' + L[0] + '/' + L[1] + ' âm</button></div>';
+    $('dayInfo').innerHTML = x;
+    // danh sách sự kiện, gần nhất trước
+    var list = S.events.map(function (e) { return { e: e, o: nextOcc(e) }; }).sort(function (a, b) { return (a.o ? a.o.days : 9999) - (b.o ? b.o.days : 9999); });
+    $('evList').innerHTML = list.length ? '<div class="lst">' + list.map(function (x) {
+      var k = EVK[x.e.k] || EVK.khac, o = x.o, nth = o ? evNth(x.e, o.yr) : '';
+      return '<div class="li" data-ev="' + esc(x.e.id) + '">' + tile(k[0], k[1]) + '<div class="m"><div class="n">' + esc(x.e.n) + '</div><div class="c"><span>' + evDate(x.e) + (nth ? ', ' + nth : '') + '</span></div></div>' +
+        '<div class="when">' + (o ? '<b class="' + (o.days <= 7 ? 'soon' : '') + '">' + soonTxt(o.days) + '</b><small>' + wd(o.iso) + ', ' + dmy(o.iso) + '</small>' : '') + '</div></div>';
+    }).join('') + '</div>' : '<div class="empty">Chưa có ngày giỗ nào.<br>Bấm <b>+ Thêm</b> để đặt ngày giỗ theo âm lịch, app tự tính ngày dương mỗi năm và nhắc trước trên trang Wallet.</div>';
+  }
+  $('lcal').onclick = function (e) { var b = e.target.closest('[data-d]'); if (!b) return; S.cd = b.dataset.d; if (S.cd.slice(0, 7) !== S.cm) S.cm = S.cd.slice(0, 7); render(); };
+  $('vCal').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-ev]');
+    if (b) { e.stopPropagation(); var ev = S.events.find(function (x) { return x.id === b.dataset.ev; }); if (ev) openEv(ev); return; }
+    if (e.target.closest('#evAddDay')) { var L = lunarOf(S.cd); openEv(null, { cal: 'am', d: L[0], m: L[1] }); }
+  }, true);
+  $('evAdd').onclick = function () { openEv(null); };
+
+  var ev = null;
+  function openEv(e, pre) {
+    ev = Object.assign({ id: '', n: '', k: 'gio', cal: 'am', d: 1, m: 1, y: 0, r: 7, note: '' }, e || {}, pre || {});
+    ev._new = !e;
+    $('evT').textContent = e ? 'Sửa ' + (EVK[ev.k] || EVK.khac)[2].toLowerCase() : 'Thêm ngày giỗ';
+    $('evN').value = ev.n; $('evY').value = ev.y || ''; $('evNote').value = ev.note;
+    $('evDel').classList.toggle('hide', !e);
+    paintEv(); show('evM'); if (!e) setTimeout(function () { $('evN').focus(); }, 80);
+  }
+  function paintEv() {
+    document.querySelectorAll('#evK button').forEach(function (b) { b.classList.toggle('on', b.dataset.v === ev.k); });
+    document.querySelectorAll('#evCal button').forEach(function (b) { b.classList.toggle('on', b.dataset.v === ev.cal); });
+    document.querySelectorAll('#evR button').forEach(function (b) { b.classList.toggle('on', +b.dataset.r === ev.r); });
+    var maxD = ev.cal === 'am' ? 30 : 31, h = '';
+    if (ev.d > maxD) ev.d = maxD;
+    for (var i = 1; i <= maxD; i++) h += '<option value="' + i + '"' + (i === ev.d ? ' selected' : '') + '>' + (ev.cal === 'am' && i <= 10 ? 'Mùng ' + i : i) + '</option>';
+    $('evD').innerHTML = h; h = '';
+    for (i = 1; i <= 12; i++) h += '<option value="' + i + '"' + (i === ev.m ? ' selected' : '') + '>Tháng ' + i + (ev.cal === 'am' ? ' (' + LMN[i] + ')' : '') + '</option>';
+    $('evMo').innerHTML = h;
+    $('evYL').textContent = ev.k === 'gio' ? 'Năm mất (không bắt buộc, để tính giỗ lần thứ mấy)' : ev.k === 'sn' ? 'Năm sinh (không bắt buộc, để tính tuổi)' : 'Năm bắt đầu (không bắt buộc)';
+    ev.y = +$('evY').value || 0;
+    var o = nextOcc(ev), nth = o ? evNth(ev, o.yr) : '';
+    $('evPrev').innerHTML = o ? 'Lần tới: <b>' + wdFull(o.iso) + ', ' + dmy(o.iso) + '</b>' + (ev.cal === 'am' ? ' dương lịch' : ' (' + lunTxt(lunarOf(o.iso)) + ')') + ', ' + soonTxt(o.days).toLowerCase() + (nth ? ', ' + nth : '') + '.' +
+      (ev.cal === 'am' ? '<br>Ngày âm lịch được đổi sang ngày dương mới cho mỗi năm.' : '') : '';
+  }
+  $('evK').onclick = function (e) { var b = e.target.closest('button'); if (!b) return; ev.k = b.dataset.v; paintEv(); };
+  $('evCal').onclick = function (e) { var b = e.target.closest('button'); if (!b) return; ev.cal = b.dataset.v; paintEv(); };
+  $('evR').onclick = function (e) { var b = e.target.closest('button'); if (!b) return; ev.r = +b.dataset.r; paintEv(); };
+  $('evD').onchange = function () { ev.d = +this.value; paintEv(); };
+  $('evMo').onchange = function () { ev.m = +this.value; paintEv(); };
+  $('evY').oninput = function () { this.value = this.value.replace(/\D/g, '').slice(0, 4); paintEv(); };
+  $('evSave').onclick = function () {
+    ev.n = $('evN').value.trim(); ev.note = $('evNote').value.trim(); ev.y = +$('evY').value || 0;
+    if (!ev.n) { toast('Nhập tên, ví dụ: Giỗ ông nội'); $('evN').focus(); return; }
+    var data = { id: ev.id || newId(), n: ev.n, k: ev.k, cal: ev.cal, d: ev.d, m: ev.m, y: ev.y, r: ev.r, note: ev.note };
+    var old = S.events.slice(), i = S.events.findIndex(function (x) { return x.id === data.id; });
+    if (i >= 0) S.events[i] = data; else S.events.push(data);
+    hide('evM'); render();
+    callScript({ action: 'evSave', ev: data }).then(function (j) {
+      if (!j || !j.ok) throw new Error((j && j.error) || 'Máy chủ còn Code.gs cũ – dán Code.gs mới rồi triển khai lại');
+      S.events = j.events; saveCfg(); render(); toast('Đã lưu ' + data.n);
+    }).catch(function (e) { S.events = old; render(); toast('Chưa lưu được: ' + netErr(e)); });
+  };
+  $('evDel').onclick = function () {
+    var id = ev.id, old = S.events.slice(), name = ev.n;
+    S.events = S.events.filter(function (x) { return x.id !== id; }); hide('evM'); render();
+    callScript({ action: 'evDel', id: id }).then(function (j) {
+      if (!j || !j.ok) throw new Error((j && j.error) || 'Không xoá được');
+      S.events = j.events; saveCfg(); render(); toast('Đã xoá ' + name);
+    }).catch(function (e) { S.events = old; render(); toast('Chưa xoá được: ' + netErr(e)); });
+  };
+
   /* ---------- ghi / sửa / xoá ---------- */
   function clean(r) { return { id: r.id, d: r.d, t: r.t, c: r.c, a: r.a, n: r.n, p: r.p, x: r.x || '', s: r.s || 'tay' }; }
   function nowTxt() { var d = new Date(Date.now() + 7 * 36e5).toISOString(); return dmy(d.slice(0, 10)) + ' ' + d.slice(11, 16); }
@@ -924,6 +1269,7 @@ body:has(.mask:not(.hide)) .toast{bottom:auto;top:calc(14px + env(safe-area-inse
   function openEd(r, opt) {
     opt = opt || {};
     ed = { r: r, opt: opt, pickedCat: !!r, v: { t: r ? r.t : 'chi', c: r ? r.c : '', a: r ? r.a : 0, d: r ? r.d : todayVN(), p: r ? r.p : '', n: r ? r.n : '', x: r ? r.x : '' } };
+    if (opt.pre) { Object.assign(ed.v, opt.pre); ed.pickedCat = true; }
     $('edT').textContent = opt.title || (r && !opt.isNew ? 'Sửa khoản' : 'Thêm khoản');
     $('edA').value = ed.v.a ? fmt(ed.v.a) : ''; $('edD').value = ed.v.d; $('edP').value = ed.v.p; $('edN').value = ed.v.n;
     $('edX').textContent = ed.v.x; $('edXw').classList.toggle('hide', !ed.v.x);
