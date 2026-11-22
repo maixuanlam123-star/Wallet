@@ -940,7 +940,7 @@ var AL = (function () {
 <script>
 (function () {
   'use strict';
-  var VER = '22/11/2026-z';
+  var VER = '22/11/2026-za';
   var LS = 'thu-chi-gd', LS_REV = 'thu-chi-gd-review', LS_TH = 'thu-chi-gd-theme';
   var THEMES = [['muc', 'Xanh dương', '#2448a8'], ['ngoc', 'Ngọc bích', '#0b8a75'], ['dao', 'Hồng đào', '#d0396f'],
     ['tim', 'Tím', '#6741d9'], ['dat', 'Cam đất', '#c2561c'], ['la', 'Lá chuối', '#3f7d20']];
@@ -1076,7 +1076,7 @@ var AL = (function () {
   function callScript(p) {
     var body = Object.assign({ token: cfg.token }, p);
     if (window.DEMO && window.handle_) {
-      return new Promise(function (ok) { setTimeout(function () { ok(JSON.parse(JSON.stringify(window.handle_(JSON.parse(JSON.stringify(body)))))); }, p.action === 'bill' ? 1600 : 250); });
+      return new Promise(function (ok) { setTimeout(function () { var o; try { o = window.handle_(JSON.parse(JSON.stringify(body))); } catch (err) { o = { ok: false, error: String((err && err.message) || err) }; } ok(JSON.parse(JSON.stringify(o))); }, p.action === 'bill' ? 1600 : 250); }); // như doPost: lỗi máy chủ → { ok:false, error }
     }
     if (!cfg.url) return Promise.reject(new Error('Chưa có địa chỉ máy chủ'));
     return fetch(cfg.url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body), redirect: 'follow' })
@@ -1945,6 +1945,13 @@ var AL = (function () {
       im.src = url;
     });
   }
+  // lý do máy chủ chưa lưu được ảnh, nói rõ cách sửa
+  function phErr(e) {
+    var m = String((e && e.message) || e || '');
+    if (/Lệnh không hợp lệ|photo/i.test(m) && /hợp lệ/.test(m)) return 'Máy chủ chưa lên bản có ảnh gia đình. Dán Code.gs mới vào Apps Script rồi Triển khai → Quản lý → Sửa → Phiên bản mới.';
+    if (/permission|quyền|authoriz|DriveApp|auth\/drive/i.test(m)) return 'Máy chủ chưa được cấp quyền Google Drive. Mở Apps Script, chọn hàm capQuyen, bấm Chạy và cho phép, rồi triển khai lại (Phiên bản mới).';
+    return m || 'Không kết nối được máy chủ';
+  }
   var PU = [];
   $('fPh').onchange = function () {
     var fs = [].slice.call(this.files || []).slice(0, 30); this.value = ''; if (!fs.length) { pkAfterUp = false; return; }
@@ -1960,14 +1967,18 @@ var AL = (function () {
     });
   };
   $('puGo').onclick = function () {
-    var cap = $('puCap').value.trim(), L = PU.slice(), done = 0, fail = 0, firstUp = ''; if (!L.length) return;
+    var cap = $('puCap').value.trim(), L = PU.slice(), done = 0, fail = 0, firstUp = '', lastErr = ''; if (!L.length) return;
     $('puGo').disabled = true;
     (function next() {
-      if (!L.length) { if (pkAfterUp && firstUp) setPin(firstUp); pkAfterUp = false; hide('puM'); render(); toast(fail ? 'Đã tải ' + done + ' ảnh, ' + fail + ' ảnh lỗi' : 'Đã thêm ' + done + ' ảnh'); $('puGo').disabled = false; return; }
+      if (!L.length) {
+        if (pkAfterUp && firstUp) setPin(firstUp); pkAfterUp = false; $('puGo').disabled = false;
+        if (!done) { $('puH').innerHTML = '<span class="err">Chưa lưu được ảnh nào. ' + esc(phErr(lastErr)) + '</span>'; return; } // giữ cửa sổ, nói rõ lý do
+        hide('puM'); render(); toast(fail ? 'Đã thêm ' + done + ' ảnh, ' + fail + ' ảnh chưa lưu được: ' + phErr(lastErr) : 'Đã thêm ' + done + ' ảnh', null, null, fail ? 12000 : 0); return;
+      }
       var x = L.shift(); $('puH').textContent = 'Đang tải ' + (done + fail + 1) + '/' + PU.length + '…';
       callScript({ action: 'photoUp', b64: x.b64, mime: 'image/jpeg', d: x.d, cap: cap }).then(function (j) {
-        if (!j || !j.ok) throw new Error('x'); if (j.pgen) S.pgen = j.pgen; done++; if (!firstUp) firstUp = j.photo.id; S.photos.unshift(j.photo); phMem.set(phKey(j.photo.id, 300), x.thumb); saveCfg();
-      }).catch(function () { fail++; }).then(next);
+        if (!j || !j.ok) throw new Error((j && j.error) || 'Máy chủ không trả lời'); if (j.pgen) S.pgen = j.pgen; done++; if (!firstUp) firstUp = j.photo.id; S.photos.unshift(j.photo); phMem.set(phKey(j.photo.id, 300), x.thumb); saveCfg();
+      }).catch(function (e) { fail++; lastErr = e; }).then(next);
     })();
   };
   // chọn ảnh cho thẻ Wallet
@@ -1993,6 +2004,10 @@ var AL = (function () {
     mi('psPick', 'eye', '#12b76a', 'Chọn ảnh cho thẻ Wallet', '<span class="r">' + (pinId() ? 'ảnh đã chọn' : 'tự đổi mỗi ngày') + '</span>');
     mi('psDir', 'link', '#2e90fa', 'Mở thư mục trên Google Drive'); $('psDir').href = S.phDir ? 'https://drive.google.com/drive/folders/' + S.phDir : 'https://drive.google.com/';
     show('psM');
+    callScript({ action: 'photoList' }).then(function (j) { // kiểm tra máy chủ đã sẵn sàng lưu ảnh chưa
+      if (j && j.ok) { if (!j.same) { S.photos = j.photos; S.phDir = j.dir || ''; S.pgen = j.pgen || ''; saveCfg(); render(); } $('psDir').href = 'https://drive.google.com/drive/folders/' + (j.dir || S.phDir); return; }
+      $('psH').innerHTML = '<span class="err">' + esc(phErr(j && j.error)) + '</span>';
+    }).catch(function () {});
   }
   $('mnPh').onclick = openPs;
   $('psOn').onclick = function () { try { localStorage.setItem(LS_PH, phOn() ? '0' : '1'); } catch (e) {} openPs(); render(); };
