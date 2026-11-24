@@ -170,6 +170,9 @@ h2.sec button{border:0;background:none;color:var(--pri);font-weight:600;font-siz
 .li .n{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
 .li .c{font-size:12.5px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;gap:6px;align-items:center}
 .li .c>span:first-child{overflow:hidden;text-overflow:ellipsis}
+.li .c .pend{flex:none;width:7px;height:7px;border-radius:50%;background:var(--pri);opacity:.6;animation:pend 1.2s ease-in-out infinite}
+.li .c .pend.err{width:auto;height:auto;border-radius:6px;background:color-mix(in srgb,var(--chi) 14%,transparent);color:var(--chi);opacity:1;animation:none;padding:0 5px;font-size:11px;font-weight:700}
+@keyframes pend{50%{opacity:.15}}@media (prefers-reduced-motion:reduce){.li .c .pend{animation:none}}
 .li .c .src{flex:none;display:inline-flex;align-items:center;gap:3px;background:var(--soft);border-radius:6px;padding:0 5px;font-size:11px}
 .li .c .src svg.i{width:11px;height:11px}
 .li .c .src.who.c{background:color-mix(in srgb,#2e90fa 14%,transparent);color:#2e90fa;font-weight:700}.li .c .src.who.v{background:color-mix(in srgb,#ee46bc 14%,transparent);color:#dd2590;font-weight:700}
@@ -942,7 +945,7 @@ var AL = (function () {
 <script>
 (function () {
   'use strict';
-  var VER = '24/11/2026-e';
+  var VER = '24/11/2026-f';
   var LS = 'thu-chi-gd', LS_REV = 'thu-chi-gd-review', LS_TH = 'thu-chi-gd-theme';
   var THEMES = [['muc', 'Xanh dương', '#2448a8'], ['ngoc', 'Ngọc bích', '#0b8a75'], ['dao', 'Hồng đào', '#d0396f'],
     ['tim', 'Tím', '#6741d9'], ['dat', 'Cam đất', '#c2561c'], ['la', 'Lá chuối', '#3f7d20']];
@@ -1047,7 +1050,7 @@ var AL = (function () {
   var cfg = {};
   try { cfg = JSON.parse(localStorage.getItem(LS) || '{}'); } catch (e) {}
   var S = {
-    rows: cfg.rows || [], moves: cfg.moves || [], photos: cfg.photos || [], phDir: cfg.phDir || '', pgen: cfg.pgen || '', phOff: 0, bal: cfg.bal || null, cats: cfg.cats || { chi: ['Chi khác'], thu: ['Thu khác'] }, hasKey: !!cfg.hasKey, budget: cfg.budget || { total: 0, cats: {} },
+    rows: (cfg.rows || []).concat((cfg.out || []).filter(function (r) { return r.t !== 'ck'; }).map(function (r) { r._tmp = 1; return r; })), moves: (cfg.moves || []).concat((cfg.out || []).filter(function (r) { return r.t === 'ck'; }).map(function (r) { r._tmp = 1; return r; })), photos: cfg.photos || [], phDir: cfg.phDir || '', pgen: cfg.pgen || '', phOff: 0, bal: cfg.bal || null, cats: cfg.cats || { chi: ['Chi khác'], thu: ['Thu khác'] }, hasKey: !!cfg.hasKey, budget: cfg.budget || { total: 0, cats: {} },
     mode: 'm', ym: todayVN().slice(0, 7), y: todayVN().slice(0, 4), view: 'home', q: '', fc: '', ft: '', fd: '', fw: '', hide: true, limit: 60,
     queue: [], review: localStorage.getItem(LS_REV) === '1', srvVer: '',
     events: cfg.events || [], calOn: !!cfg.calOn, me: cfg.me || 'c', users: cfg.users || { c: 'Chồng', v: 'Vợ', vOn: false }, rw: '', cm: todayVN().slice(0, 7), cd: todayVN()
@@ -1103,7 +1106,7 @@ var AL = (function () {
       // khoản chuyển giữa tiền mặt và ngân hàng (rút / nộp) để riêng: không tính là thu hay chi
       S.rows = all.filter(function (r) { return r.t !== 'ck'; }); S.moves = all.filter(function (r) { return r.t === 'ck'; }); S.bal = j.bal || null;
       S.cats = j.cats; S.hasKey = j.hasKey; S.srvVer = j.ver || ''; if (j.budget) S.budget = j.budget; if (j.events) S.events = j.events; S.calOn = !!j.calOn; if (j.users) S.users = j.users; if (j.me) S.me = j.me;
-      saveCfg(); render(); autoOrph();
+      saveCfg(); render(); autoOrph(); setTimeout(flushOut, 300);
     }).catch(function (e) { loading = false; $('btnSync').style.opacity = ''; if (!quiet) toast(netErr(e)); });
   }
   $('btnSync').onclick = function () { load(false, true).then(function () { toast('Đã cập nhật sổ'); }); };
@@ -1397,12 +1400,12 @@ var AL = (function () {
   }
   function mvTxt(r) { return r.w === 'tm' ? 'Tiền mặt → Ngân hàng' : 'Ngân hàng → Tiền mặt'; }
   function liHtml(r, withDate) {
-    if (r.t === 'ck') return '<div class="li" data-id="' + esc(r.id) + '">' + tile('swap', '#667085') + '<div class="m"><div class="n">' + esc(r.n || r.c) + '</div><div class="c"><span>' + mvTxt(r) + '</span>' + (r._tmp ? '<span>đang lưu…</span>' : '') + '</div></div>' +
+    if (r.t === 'ck') return '<div class="li" data-id="' + esc(r.id) + '">' + tile('swap', '#667085') + '<div class="m"><div class="n">' + esc(r.n || r.c) + '</div><div class="c"><span>' + mvTxt(r) + '</span>' + (r._tmp ? '<span class="pend' + (r._err ? ' err' : '') + '" title="' + (r._err ? 'Chờ gửi lên máy chủ' : 'Đang gửi') + '">' + (r._err ? 'chờ gửi' : '') + '</span>' : '') + '</div></div>' +
       '<div class="a mv">' + fmt(r.a) + (withDate ? '<small class="dt">' + dayLbl(r.d) + '</small>' : '') + '</div></div>';
     var inv = isInv(r.c), cls = r.t === 'thu' ? 'thu' : inv ? 'inv' : 'chi';
     return '<div class="li" data-id="' + esc(r.id) + '">' + catTile(r.c, r.t) +
       '<div class="m"><div class="n">' + esc(niceN(r)) + '</div><div class="c"><span>' + esc(catLabel(r.c)) + (r.p && r.n ? ', ' + esc(niceP(r.p)) : '') + '</span>' +
-      (r.w ? '<span class="src" title="' + WL[r.w][2] + '">' + ic(WL[r.w][0]) + (r.w === 'tm' ? 'tiền mặt' : 'ngân hàng') + '</span>' : '') + (r.s === 'bill' ? '<span class="src" title="Ghi từ ảnh bill">' + ic('receipt') + 'bill</span>' : '') + (r._tmp ? '<span>đang lưu…</span>' : '') + '</div></div>' +
+      (r.w ? '<span class="src" title="' + WL[r.w][2] + '">' + ic(WL[r.w][0]) + (r.w === 'tm' ? 'tiền mặt' : 'ngân hàng') + '</span>' : '') + (r.s === 'bill' ? '<span class="src" title="Ghi từ ảnh bill">' + ic('receipt') + 'bill</span>' : '') + (r._tmp ? '<span class="pend' + (r._err ? ' err' : '') + '" title="' + (r._err ? 'Chờ gửi lên máy chủ' : 'Đang gửi') + '">' + (r._err ? 'chờ gửi' : '') + '</span>' : '') + '</div></div>' +
       '<div class="a ' + cls + '">' + (r.t === 'thu' ? '+' : '−') + fmt(r.a) + (withDate ? '<small class="dt">' + dayLbl(r.d) + '</small>' : '') + '</div></div>';
   }
   function renderList(rows) {
@@ -2088,16 +2091,36 @@ var AL = (function () {
     }).catch(function (e) { list.forEach(function (f) { f.r.w = ''; }); render(); toast('Chưa lưu được: ' + netErr(e)); });
   };
   function nowTxt() { var d = new Date(Date.now() + 7 * 36e5).toISOString(); return dmy(d.slice(0, 10)) + ' ' + d.slice(11, 16); }
+  // Ghi ngay trên máy (hiện số liệu tức thì), gửi máy chủ chạy nền. Mất mạng / máy chủ chậm: khoản nằm trong hàng chờ
+  // (cfg.out, lưu trong máy) và tự gửi lại khi có mạng / mở app – không mất, không phải nhập lại.
+  var OUT_BUSY = false;
+  function outSave() { cfg.out = S.rows.concat(S.moves).filter(function (r) { return r._tmp; }).map(clean); saveCfg(); }
   function saveRows(rows, okMsg) {
-    rows.forEach(function (r) { r._tmp = 1; if (!r.u) r.u = S.me; (r.t === 'ck' ? S.moves : S.rows).push(r); }); render();
+    rows.forEach(function (r) { r._tmp = 1; if (!r.u) r.u = S.me; r.at = r.at || nowTxt(); (r.t === 'ck' ? S.moves : S.rows).push(r); });
+    outSave(); render(); if (okMsg) toast(okMsg);
+    return sendOut(rows).then(function (ok) { return ok !== false; });
+  }
+  function sendOut(rows) {
     return callScript({ action: 'add', rows: rows.map(clean) }).then(function (j) {
       if (!j || !j.ok) throw new Error((j && j.error) || 'Không lưu được');
-      rows.forEach(function (r) { delete r._tmp; r.at = r.at || nowTxt(); });
-      saveCfg(); render(); if (okMsg) toast(okMsg); return true;
-    }).catch(function (e) { var nf = function (r) { return rows.indexOf(r) < 0; }; S.rows = S.rows.filter(nf); S.moves = S.moves.filter(nf); render(); toast('Chưa lưu được: ' + netErr(e)); return false; });
+      rows.forEach(function (r) { delete r._tmp; delete r._err; });
+      outSave(); render(); return true;
+    }).catch(function (e) {
+      var hard = /hợp lệ|mật khẩu|quyền/i.test(String(e && e.message));
+      rows.forEach(function (r) { r._err = 1; }); outSave(); render();
+      toast(hard ? 'Chưa lưu được: ' + netErr(e) : 'Chưa gửi được lên máy chủ – khoản vẫn nằm trên máy, app sẽ tự gửi lại', null, null, 6000);
+      return null;
+    });
   }
+  // gửi lại các khoản còn chờ (mở app, có mạng trở lại, mỗi lần tải sổ)
+  function flushOut() {
+    if (OUT_BUSY || !cfg.token) return;
+    var wait = S.rows.concat(S.moves).filter(function (r) { return r._tmp; }); if (!wait.length) return;
+    OUT_BUSY = true; sendOut(wait).then(function (ok) { OUT_BUSY = false; if (ok) toast('Đã gửi ' + wait.length + ' khoản còn chờ lên máy chủ'); });
+  }
+  window.addEventListener('online', function () { setTimeout(flushOut, 800); });
   function updRow(r, nv) {
-    var old = clean(r); Object.assign(r, nv); render();
+    var old = clean(r); Object.assign(r, nv); render(); toast('Đã lưu thay đổi'); // hiện ngay, máy chủ ghi chạy nền
     return callScript({ action: 'update', row: clean(r) }).then(function (j) {
       if (!j || !j.ok) throw new Error((j && j.error) || 'Không lưu được');
       saveCfg();
@@ -2106,7 +2129,7 @@ var AL = (function () {
       if (same.length) {
         var name = (brandOf(src) && !GENB.test(brandOf(src).n)) ? brandOf(src).n : src;
         toast('Đổi luôn ' + same.length + ' khoản khác ở ' + name + ' sang ' + catLabel(r.c) + '?', 'Đổi luôn', function () { sameFix(same, r.c); }, 10000);
-      } else toast('Đã lưu thay đổi');
+      }
     }).catch(function (e) { Object.assign(r, old); render(); toast('Chưa lưu được: ' + netErr(e)); });
   }
   function sameFix(rows, c) {

@@ -8,7 +8,7 @@
  * Khoá Gemini: nhập trong app (Menu → Khoá đọc bill). Không cần sửa file này.
  */
 
-var VER = '24/11/2026-e'; // luôn giống VER trong index.html (máy chủ nạp từ GitHub dùng để biết có bản mới)
+var VER = '24/11/2026-f'; // luôn giống VER trong index.html (máy chủ nạp từ GitHub dùng để biết có bản mới)
 var SHEET = 'THU CHI GIA ĐÌNH';
 var HEAD = ['ID', 'Ngày', 'Loại', 'Mục', 'Số tiền', 'Nội dung', 'Nơi mua / Người nhận', 'Chi tiết', 'Nguồn', 'Thời gian nhập', 'Tiền mặt / Ngân hàng', 'Người ghi'];
 var NCOL = HEAD.length;
