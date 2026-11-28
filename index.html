@@ -263,6 +263,7 @@ h2.sec button{border:0;background:none;color:var(--pri);font-weight:600;font-siz
 .ncl{display:flex;flex-direction:column;gap:10px;margin:10px 0;max-height:55vh;overflow:auto}.ncr{background:var(--soft);border-radius:12px;padding:10px}.ncr label{display:flex;gap:10px;align-items:flex-start}.ncr label b,.ncr label small{display:block}.ncr small{color:var(--mut)}.ncf{display:grid;grid-template-columns:120px 1fr;gap:8px;margin-top:8px}
 .srvw{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--ink);border-radius:12px;padding:10px 12px;font-size:13px;margin:0 0 10px}
 .rw.pjr.need{box-shadow:inset 0 0 0 2px var(--inv)}.rw.pjr.need select#edJ{color:var(--inv);font-weight:700}
+.pjk{cursor:pointer}.pjg .pjk:active,.pjv.pjk:active{opacity:.7}
 .rcl{margin:4px -16px 8px;max-height:58vh;overflow:auto}.rcl .li{padding:10px 16px}.rcl .li .c{flex-wrap:wrap;row-gap:3px}.rcl .li .c>span:first-child{flex:1 1 100%}#rcH b.thu{color:var(--thu)}
 .lg button{display:block;width:100%;border:0;background:none;padding:8px 0;text-align:left}
 .lg .r1{display:flex;gap:10px;align-items:center}
@@ -1029,7 +1030,7 @@ var AL = (function () {
 <script>
 (function () {
   'use strict';
-  var VER = '28/11/2026-o';
+  var VER = '28/11/2026-p';
   var SW_CACHE = 'thu-chi-v2'; // phải giống CACHE trong sw.js
   var LS = 'thu-chi-gd', LS_REV = 'thu-chi-gd-review', LS_TH = 'thu-chi-gd-theme';
   var THEMES = [['muc', 'Xanh dương', '#2448a8'], ['ngoc', 'Ngọc bích', '#0b8a75'], ['dao', 'Hồng đào', '#d0396f'],
@@ -1609,9 +1610,9 @@ var AL = (function () {
     var L = pjNames(), h = '<h2 class="sec"><span>Dự án</span><button id="pjNew">+ Dự án</button></h2>';
     if (!L.length) return h + '<div class="empty">Gom mọi khoản của một dự án (vốn gia đình bỏ vào, vốn góp, vay mượn, trả lãi, doanh thu) vào một chỗ. Các khoản dự án được tính riêng, không lẫn vào thu chi sinh hoạt.<br><button class="add2" id="pjNew2" style="margin:10px auto 0">+ Tạo dự án</button></div>';
     return h + L.map(function (n) {
-      var o = pjSum(n), m = function (lbl, v, cls) { return '<div><small>' + lbl + '</small><b class="' + (cls || '') + '">' + mk(fmt(v)) + '</b></div>'; };
+      var o = pjSum(n), K = ['von', 'gop', 'vay', 'no', 'tra', 'lai', 'cp', 'dt'], ki = 0, m = function (lbl, v, cls) { return '<div class="pjk" role="button" tabindex="0" data-pjk="' + K[ki++] + '" data-pjn="' + esc(n) + '"><small>' + lbl + '</small><b class="' + (cls || '') + '">' + mk(fmt(v)) + '</b></div>'; };
       return '<div class="card pjc"><div class="pjt"><b>' + esc(n) + '</b><span class="pjs">' + o.k + ' khoản' + (o.from ? ', từ ' + dmy(o.from).slice(3) : '') + '</span><button class="pjeye" data-pjeye aria-label="' + (S.hide ? 'Hiện số liệu' : 'Ẩn số liệu') + '"><svg class="i" viewBox="0 0 24 24">' + (S.hide ? EYE_OFF : EYE_ON) + '</svg></button></div>' +
-        '<div class="pjv">' + mk(fmt(o.vao)) + ' đ</div><div class="pjs">Tổng vốn đã vào dự án (gia đình + góp + vay)</div>' +
+        '<div class="pjv pjk" role="button" tabindex="0" data-pjk="vao" data-pjn="' + esc(n) + '">' + mk(fmt(o.vao)) + ' đ</div><div class="pjs">Tổng vốn đã vào dự án (gia đình + góp + vay)</div>' +
         '<div class="pjg">' + m('Gia đình bỏ vào', o.von) + m('Vốn góp nhận', o.gop) + m('Vay / mượn', o.vay) + m('Còn nợ vay', o.no, o.no > 0 ? 'neg' : '') +
         m('Đã trả gốc vay', o.tra) + m('Đã trả lãi / chia lời', o.lai) + m('Chi phí dự án', o.cp) + m('Doanh thu / lợi nhuận', o.dt, 'pos') + '</div>' +
         '<div class="pjs" style="margin-top:10px">Lãi / lỗ dự án đến nay: <b class="' + (o.ll < 0 ? 'neg' : 'pos') + '" style="color:var(--' + (o.ll < 0 ? 'chi' : 'thu') + ')">' + mk((o.ll < 0 ? '−' : '+') + fmt(Math.abs(o.ll))) + ' đ</b> (doanh thu − chi phí − lãi)</div>' +
@@ -1671,27 +1672,33 @@ var AL = (function () {
   }
   $('vRep').addEventListener('click', function (e) {
     if (e.target.closest('[data-pjeye]') || (S.hide && e.target.closest('.pjv,.pjg,.pjc .pjs b'))) { e.stopPropagation(); var y = window.scrollY; S.hide = !S.hide; render(); window.scrollTo(0, y); return; }
-    var b = e.target.closest('#pjNew,#pjNew2,[data-pjsee],[data-pjadd],[data-pjnew]'); if (!b) return;
+    var b = e.target.closest('#pjNew,#pjNew2,[data-pjsee],[data-pjadd],[data-pjnew],[data-pjk]'); if (!b) return;
     e.stopPropagation();
     if (b.id === 'pjNew' || b.id === 'pjNew2') { $('pnN').value = ''; show('pnM'); setTimeout(function () { $('pnN').focus(); }, 80); return; }
     if (b.dataset.pjsee) { openPjL(b.dataset.pjsee); return; }
+    if (b.dataset.pjk) { openPjL(b.dataset.pjn, b.dataset.pjk); return; }
     if (b.dataset.pjadd) { openPj(b.dataset.pjadd); return; }
     openEd(null, { pre: { t: 'chi', c: S.cats.chi.find(function (c) { return isInv(c) && /du an/.test(norm(c)); }) || S.cats.chi.find(isInv) || '', j: b.dataset.pjnew } });
   }, true);
   $('vRep').onclick = function (e) { var w = e.target.closest('[data-rw]'); if (w) { S.rw = w.dataset.rw; render(); return; } var b = e.target.closest('[data-c]'); if (!b) return; openRc(b.dataset.c, b.dataset.t || 'chi'); };
   // popup các khoản của một dự án (mọi kỳ, cả hai người)
-  function openPjL(n) {
-    var L = S.rows.concat(S.moves).filter(function (r) { return r.j === n && !/~$/.test(r.id); }).sort(function (a, b) { return a.d < b.d ? 1 : a.d > b.d ? -1 : b.a - a.a; });
-    S.rc = ''; S.rcJ = n;
-    $('rcT').textContent = n;
-    $('rcH').textContent = L.length ? L.length + ' khoản, từ ' + dmy(L[L.length - 1].d) + ' đến ' + dmy(L[0].d) + '. Bấm một khoản để sửa hoặc đổi vai trò.' : 'Chưa có khoản nào. Bấm "Thêm khoản cũ" để chọn các khoản đã ghi, hoặc "Ghi khoản mới".';
+  // vai trò của một khoản trong dự án (khoản vay nợ gắn dự án: vay / trả gốc)
+  function pjRole(r) { return r.t === 'no' ? (r.v === 'vay' ? 'vay' : r.v === 'tra' ? 'tra' : r.v === 'cho' ? 'cp' : 'dt') : r.jr || guessJr(r.t, r.c, r.n); }
+  var PJK = { vao: ['Tổng vốn đã vào', ['von', 'gop', 'vay']], von: ['Gia đình bỏ vào', ['von']], gop: ['Vốn góp nhận', ['gop', 'hv']], vay: ['Vay / mượn', ['vay']], no: ['Còn nợ vay', ['vay', 'tra']], tra: ['Đã trả gốc vay', ['tra']], lai: ['Đã trả lãi / chia lời', ['lai']], cp: ['Chi phí dự án', ['cp']], dt: ['Doanh thu / lợi nhuận', ['dt']] };
+  function openPjL(n, k) {
+    var f = k && PJK[k];
+    var L = S.rows.concat(S.moves).filter(function (r) { return r.j === n && !/~$/.test(r.id) && (!f || f[1].indexOf(pjRole(r)) >= 0); }).sort(function (a, b) { return a.d < b.d ? 1 : a.d > b.d ? -1 : b.a - a.a; });
+    S.rc = ''; S.rcJ = n; S.rcK = k || '';
+    $('rcT').textContent = f ? f[0] : n;
+    if (f) { var o = pjSum(n), v = k === 'no' ? o.no : k === 'vao' ? o.vao : o[k]; $('rcH').innerHTML = esc(n) + ', ' + L.length + ' khoản: <b>' + mk(fmt(v)) + ' đ</b>' + (k === 'no' ? ' (đã vay ' + mk(fmt(o.vay)) + ' − đã trả gốc ' + mk(fmt(o.tra)) + ')' : '') + (L.length ? '' : '. Chưa có khoản nào ở mục này.'); }
+    else $('rcH').textContent = L.length ? L.length + ' khoản, từ ' + dmy(L[L.length - 1].d) + ' đến ' + dmy(L[0].d) + '. Bấm một khoản để sửa hoặc đổi vai trò.' : 'Chưa có khoản nào. Bấm "Thêm khoản cũ" để chọn các khoản đã ghi, hoặc "Ghi khoản mới".';
     $('rcL').innerHTML = L.map(function (r) { return liHtml(r, true); }).join('');
     $('rcPj').classList.add('hide'); $('rcGo').textContent = 'Thêm khoản cũ';
     show('rcM');
   }
   // popup các khoản của một mục trong báo cáo
   function openRc(c, t) {
-    S.rcJ = ''; $('rcGo').textContent = 'Xem trong Sổ';
+    S.rcJ = ''; S.rcK = ''; $('rcGo').textContent = 'Xem trong Sổ';
     var L = (S.rr || []).filter(function (r) { return r.t === t && (r.c === c || grp(r.c) === c); }).sort(function (a, b) { return a.d < b.d ? 1 : a.d > b.d ? -1 : b.a - a.a; });
     var sum = L.reduce(function (x, r) { return x + r.a; }, 0);
     S.rc = c;
@@ -2348,7 +2355,7 @@ var AL = (function () {
     var op = function (id) { return !$(id).classList.contains('hide'); };
     if (op('noM')) paintNoB();
     if (op('nlM') && NOL) openNoL(NOL.k, true);
-    if (op('rcM')) { if (S.rcJ) openPjL(S.rcJ); }
+    if (op('rcM')) { if (S.rcJ) openPjL(S.rcJ, S.rcK); }
   }
   function openNoB() { paintNoB(); show('noM'); poll(); }
   function eyeIc() { return '<svg class="i" viewBox="0 0 24 24">' + (S.hide ? EYE_OFF : EYE_ON) + '</svg>'; }
