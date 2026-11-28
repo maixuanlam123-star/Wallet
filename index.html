@@ -1029,7 +1029,7 @@ var AL = (function () {
 <script>
 (function () {
   'use strict';
-  var VER = '28/11/2026-l';
+  var VER = '28/11/2026-n';
   var SW_CACHE = 'thu-chi-v2'; // phải giống CACHE trong sw.js
   var LS = 'thu-chi-gd', LS_REV = 'thu-chi-gd-review', LS_TH = 'thu-chi-gd-theme';
   var THEMES = [['muc', 'Xanh dương', '#2448a8'], ['ngoc', 'Ngọc bích', '#0b8a75'], ['dao', 'Hồng đào', '#d0396f'],
@@ -1175,7 +1175,13 @@ var AL = (function () {
   applyTheme();
 
   /* ---------- máy chủ ---------- */
+  // đếm các lần ghi (thêm / sửa / xoá / cài đặt): sổ tải về trong lúc đang ghi là sổ cũ → bỏ, tải lại sau
+  var MUT = 0, WIP = 0, WT = 0, RD = /^(list|login|photoList|photoGet|bill|gemCfg|ping)$/;
   function callScript(p) {
+    if (!RD.test(p.action)) { MUT++; WIP++; WT = Date.now(); return callScript0(p).then(function (j) { WIP--; return j; }, function (e) { WIP--; throw e; }); }
+    return callScript0(p);
+  }
+  function callScript0(p) {
     var body = Object.assign({ token: cfg.token, v: VER }, p); // v: máy chủ nạp từ GitHub thấy bản khác thì tự lấy Code.gs mới
     if (window.DEMO && window.handle_) {
       return new Promise(function (ok) { setTimeout(function () { var o; try { o = window.handle_(JSON.parse(JSON.stringify(body))); } catch (err) { o = { ok: false, error: String((err && err.message) || err) }; } ok(JSON.parse(JSON.stringify(o))); }, p.action === 'bill' ? 1600 : 250); }); // như doPost: lỗi máy chủ → { ok:false, error }
@@ -1191,7 +1197,8 @@ var AL = (function () {
   function load(quiet, force) {
     if (loading) { if (force) loadAgain = true; return Promise.resolve(); } // đang tải: tải lại ngay sau khi xong (vd. vừa đổi người dùng)
     loading = true; loadAgain = false; $('btnSync').style.opacity = .5;
-    var tok = cfg.token;
+    var tok = cfg.token, m0 = MUT;
+    if (WIP && Date.now() - WT < 15000) { loading = false; $('btnSync').style.opacity = ''; setTimeout(function () { load(quiet, force); }, 1200); return Promise.resolve(); } // đang ghi: đợi ghi xong mới tải
     return callScript({ action: 'list', gen: force || !S.rows.length ? '' : cfg.gen }).then(function (j) {
       loading = false; $('btnSync').style.opacity = '';
       if (tok !== cfg.token || loadAgain) { loadAgain = false; return load(quiet, true); } // kết quả của người dùng trước (đã đổi người giữa chừng) → bỏ, tải lại
@@ -1199,6 +1206,7 @@ var AL = (function () {
       if (j.pgen && j.pgen !== S.pgen) loadPhotos(); // ảnh chỉ tải lại khi có ảnh mới / sửa / xoá
       if (j.ver && j.ver !== S.srvVer) { S.srvVer = j.ver; saveCfg(); if (j.same) render(); } // máy chủ vừa lên bản mới → bỏ cảnh báo ngay
       if (j.same) return; // dữ liệu không đổi → không tải, không vẽ lại
+      if (MUT !== m0 || WIP && Date.now() - WT < 15000) { setTimeout(function () { load(true, true); }, 1200); return; } // vừa ghi trong lúc tải: sổ này đã cũ
       cfg.gen = j.gen || '';
       var tmp = S.rows.concat(S.moves).filter(function (r) { return r._tmp; }), ids = {};
       j.rows.forEach(function (r) { ids[r.id] = 1; });
@@ -1206,7 +1214,7 @@ var AL = (function () {
       // khoản chuyển giữa tiền mặt và ngân hàng (rút / nộp) để riêng: không tính là thu hay chi
       S.rows = all.filter(function (r) { return !isMv(r); }); S.moves = all.filter(isMv); S.bal = j.bal || null;
       S.cats = j.cats; S.hasKey = j.hasKey; S.srvVer = j.ver || ''; if (j.budget) S.budget = j.budget; if (j.events) S.events = j.events; S.calOn = !!j.calOn; if (j.projects) S.projects = j.projects; if (j.users) S.users = j.users; if (j.me) S.me = j.me;
-      saveCfg(); render(); autoOrph(); setTimeout(flushOut, 300);
+      saveCfg(); render(); reOpen(); autoOrph(); setTimeout(flushOut, 300);
     }).catch(function (e) { loading = false; $('btnSync').style.opacity = ''; if (tok !== cfg.token || loadAgain) { loadAgain = false; return load(quiet, true); } if (!quiet) toast(netErr(e)); });
   }
   $('btnSync').onclick = function () { load(false, true).then(function () { toast('Đã cập nhật sổ'); }); };
@@ -2300,13 +2308,14 @@ var AL = (function () {
       if (NOV[r.v]) o[r.v] += r.a; o.rows.push(r); if (r.d >= o.last) { o.last = r.d; if (o.kind !== 'vc' && r.p) { o.name = r.p; o.p = r.p; } }
     });
     S.rows.forEach(function (r) {
-      if ((r.u || 'c') !== u || !r.p || !/^lai (cho )?vay$/.test(norm(r.c))) return;
+      if ((r.u || 'c') !== u || !r.p || !(r.t === 'chi' ? /lai vay/ : /lai cho vay/).test(norm(r.c))) return;
       var o = m['cn:' + norm(r.p)] || m['nh:' + norm(r.p)]; if (!o) return;
       if (r.t === 'chi') o.lai += r.a; else o.laiN += r.a; o.rows.push(r);
     });
     return Object.keys(m).map(function (k) { var o = m[k]; o.owe = o.vay - o.tra; o.due = o.cho - o.thu; return o; })
       .sort(function (a, b) { return (b.owe + b.due) - (a.owe + a.due) || (a.last < b.last ? 1 : -1); });
   }
+  function laiCat(chi) { var re = chi ? /lai vay/ : /lai cho vay/, f = (chi ? S.cats.chi : S.cats.thu).find(function (c) { return re.test(norm(c)); }); return f || (chi ? 'Lãi vay' : 'Lãi cho vay'); } // dùng đúng mục lãi trong danh mục của anh
   function noTot(L) { var t = { owe: 0, due: 0, lai: 0 }; L.forEach(function (o) { t.owe += Math.max(0, o.owe); t.due += Math.max(0, o.due); t.lai += o.lai; }); return t; }
   function noBtn() {
     var L = noBook(S.me), T = noTot(L);
@@ -2334,7 +2343,14 @@ var AL = (function () {
     if (b.dataset.nok) openNoL(b.dataset.nok); else openNoB();
   });
   // sổ vay nợ
-  function openNoB() { paintNoB(); show('noM'); }
+  // sổ vừa tải thêm dữ liệu mới → vẽ lại các khung đang mở (sổ vay nợ, từng người, các khoản dự án)
+  function reOpen() {
+    var op = function (id) { return !$(id).classList.contains('hide'); };
+    if (op('noM')) paintNoB();
+    if (op('nlM') && NOL) openNoL(NOL.k, true);
+    if (op('rcM')) { if (S.rcJ) openPjL(S.rcJ); }
+  }
+  function openNoB() { paintNoB(); show('noM'); poll(); }
   function eyeIc() { return '<svg class="i" viewBox="0 0 24 24">' + (S.hide ? EYE_OFF : EYE_ON) + '</svg>'; }
   function noEye() { S.hide = !S.hide; render(); if (!$('noM').classList.contains('hide')) paintNoB(); if (!$('nlM').classList.contains('hide') && NOL) openNoL(NOL.k, true); }
   $('noEye').onclick = noEye; $('nlEye').onclick = noEye;
@@ -2442,7 +2458,7 @@ var AL = (function () {
     }
     var id = newId(), rows = [Object.assign({ id: id, t: 'no', x: '', s: 'tay' }, nv)];
     if (vc) rows.push(Object.assign({ id: id + '~', t: 'no', x: '', s: 'tay', u: other(S.me) }, nv, { v: NOFLIP[NO.v], w: NO.w2 }));
-    if (L) rows.push({ id: newId(), d: d, t: NO.v === 'tra' ? 'chi' : 'thu', c: NO.v === 'tra' ? 'Lãi vay' : 'Lãi cho vay', a: L, n: (NO.v === 'tra' ? 'Trả lãi ' : 'Lãi ') + p + (NO.v === 'thu' ? ' trả' : ''), p: p, x: '', s: 'tay', w: NO.w, j: nv.j, jr: nv.j ? (NO.v === 'tra' ? 'lai' : 'dt') : '' });
+    if (L) rows.push({ id: newId(), d: d, t: NO.v === 'tra' ? 'chi' : 'thu', c: laiCat(NO.v === 'tra'), a: L, n: (NO.v === 'tra' ? 'Trả lãi ' : 'Lãi ') + p + (NO.v === 'thu' ? ' trả' : ''), p: p, x: '', s: 'tay', w: NO.w, j: nv.j, jr: nv.j ? (NO.v === 'tra' ? 'lai' : 'dt') : '' });
     saveRows(rows, 'Đã ghi ' + NOV[NO.v][0].toLowerCase() + ' ' + noWho(rows[0]) + ' ' + fmt(a) + ' đ' + (L ? ' + lãi ' + fmt(L) + ' đ' : ''));
   };
   function updNo(list) {
@@ -3472,7 +3488,13 @@ var AL = (function () {
   setTimeout(chkVer, 1500);
   window.addEventListener('pagehide', function () { if (cfgT) saveCfgNow(); });
   document.addEventListener('visibilitychange', function () { if (document.hidden) { if (cfgT) saveCfgNow(); if (!S.hide) { S.hide = true; render(); } return; } chkVer(); if (cfg.token) load(true); });
-  setInterval(function () { if (!document.hidden && cfg.token && !active) load(true); }, 60000);
+  // máy khác (vợ / chồng, máy tính) vừa ghi → máy này thấy sau tối đa ~15 giây khi đang mở app;
+  // hỏi máy chủ rất nhẹ (chỉ so mã thay đổi), chỉ tải sổ khi thật sự có thay đổi
+  var lastPoll = 0;
+  function busyUI() { var m = document.querySelector('.mask:not(.hide)'); return m && !/^(noM|nlM|rcM)$/.test(m.id) || /^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName || ''); } // đang nhập / sửa: không tải đè
+  function poll() { if (document.hidden || !cfg.token || active || busyUI() || Date.now() - lastPoll < 4000) return; lastPoll = Date.now(); load(true); }
+  setInterval(poll, 15000);
+  window.addEventListener('focus', poll); window.addEventListener('pageshow', poll); window.addEventListener('online', poll);
 
   if (window.DEMO) { cfg.url = 'demo'; cfg.token = cfg.token || 'demo123'; }
   if (cfg.url && cfg.token) showMain(); else showLogin('');

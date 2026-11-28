@@ -8,7 +8,7 @@
  * Khoá Gemini: nhập trong app (Menu → Khoá đọc bill). Không cần sửa file này.
  */
 
-var VER = '28/11/2026-l'; // luôn giống VER trong index.html (máy chủ nạp từ GitHub dùng để biết có bản mới)
+var VER = '28/11/2026-n'; // luôn giống VER trong index.html (máy chủ nạp từ GitHub dùng để biết có bản mới)
 var SHEET = 'THU CHI GIA ĐÌNH';
 var HEAD = ['ID', 'Ngày', 'Loại', 'Mục', 'Số tiền', 'Nội dung', 'Nơi mua / Người nhận', 'Chi tiết', 'Nguồn', 'Thời gian nhập', 'Tiền mặt / Ngân hàng', 'Người ghi', 'Dự án', 'Vai trò trong dự án'];
 // vai trò của một khoản trong dự án (ghi chữ ra Sheet cho dễ đọc)
@@ -23,8 +23,8 @@ var DEF_CATS = {
   chi: ['Ăn uống', 'Cà phê – trà sữa', 'Đi chợ – siêu thị', 'Điện nước – internet', 'Xăng xe – đi lại', 'Nhà cửa – đồ dùng',
         'Con cái – học hành', 'Sức khoẻ', 'Mua sắm – quần áo', 'Hiếu hỉ – biếu tặng', 'Giải trí – du lịch',
         'Chi đầu tư / Nhà đất', 'Chi đầu tư / Dự án', 'Chi đầu tư / Chứng khoán', 'Chi đầu tư / Vàng', 'Chi đầu tư / Gửi tiết kiệm', 'Chi đầu tư / Đầu tư khác',
-        'Chi khác'],
-  thu: ['Lương', 'Thưởng', 'Thu đầu tư / Lãi ngân hàng', 'Thu đầu tư / Thu từ dự án', 'Thu đầu tư / Cổ tức – chứng khoán', 'Thu khác']
+        'Lãi vay', 'Chi khác'],
+  thu: ['Lương', 'Thưởng', 'Thu đầu tư / Lãi ngân hàng', 'Thu đầu tư / Thu từ dự án', 'Thu đầu tư / Cổ tức – chứng khoán', 'Lãi cho vay', 'Thu khác']
 };
 // Mục con viết "Nhóm / Mục con". Nhóm có chữ "đầu tư" được app tính riêng (không vào chi sinh hoạt).
 var GEM_BASE = 'https://generativelanguage.googleapis.com/v1beta/';
@@ -176,6 +176,11 @@ function cats_() {
             P.setProperty('cats', JSON.stringify(c));
           }
           P.setProperty('catsV3', '1');
+        }
+        if (!P.getProperty('catsV4')) { // sổ vay nợ: tiền lãi ghi vào mục "Lãi vay" (chi) / "Lãi cho vay" (thu)
+          var ins = function (list, name, re) { if (list.some(function (x) { return re.test(normVN_(x)); })) return; var k = list.length && /khac/.test(normVN_(list[list.length - 1])) ? list.length - 1 : list.length; list.splice(k, 0, name); };
+          ins(c.chi, 'Lãi vay', /lai vay/); ins(c.thu, 'Lãi cho vay', /lai cho vay/);
+          P.setProperty('cats', JSON.stringify(c)); P.setProperty('catsV4', '1');
         }
         return c;
       }
