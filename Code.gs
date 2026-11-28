@@ -8,7 +8,7 @@
  * Khoá Gemini: nhập trong app (Menu → Khoá đọc bill). Không cần sửa file này.
  */
 
-var VER = '28/11/2026-i'; // luôn giống VER trong index.html (máy chủ nạp từ GitHub dùng để biết có bản mới)
+var VER = '28/11/2026-k'; // luôn giống VER trong index.html (máy chủ nạp từ GitHub dùng để biết có bản mới)
 var SHEET = 'THU CHI GIA ĐÌNH';
 var HEAD = ['ID', 'Ngày', 'Loại', 'Mục', 'Số tiền', 'Nội dung', 'Nơi mua / Người nhận', 'Chi tiết', 'Nguồn', 'Thời gian nhập', 'Tiền mặt / Ngân hàng', 'Người ghi', 'Dự án', 'Vai trò trong dự án'];
 // vai trò của một khoản trong dự án (ghi chữ ra Sheet cho dễ đọc)
@@ -631,7 +631,7 @@ function rowIn_(o) {
 }
 
 function list_(gen) {
-  if (gen && gen === gen_()) return { ok: true, same: true, gen: gen, pgen: pgen_() };
+  if (gen && gen === gen_()) return { ok: true, same: true, gen: gen, pgen: pgen_(), ver: VER };
   var sh = sheet_(), tz = tz_();
   var n = sh.getLastRow() - 1, rows = [];
   if (n > 0) {

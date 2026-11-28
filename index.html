@@ -1029,7 +1029,8 @@ var AL = (function () {
 <script>
 (function () {
   'use strict';
-  var VER = '28/11/2026-i';
+  var VER = '28/11/2026-k';
+  var SW_CACHE = 'thu-chi-v2'; // phải giống CACHE trong sw.js
   var LS = 'thu-chi-gd', LS_REV = 'thu-chi-gd-review', LS_TH = 'thu-chi-gd-theme';
   var THEMES = [['muc', 'Xanh dương', '#2448a8'], ['ngoc', 'Ngọc bích', '#0b8a75'], ['dao', 'Hồng đào', '#d0396f'],
     ['tim', 'Tím', '#6741d9'], ['dat', 'Cam đất', '#c2561c'], ['la', 'Lá chuối', '#3f7d20']];
@@ -1196,6 +1197,7 @@ var AL = (function () {
       if (tok !== cfg.token || loadAgain) { loadAgain = false; return load(quiet, true); } // kết quả của người dùng trước (đã đổi người giữa chừng) → bỏ, tải lại
       if (!j || !j.ok) { if (!quiet) toast((j && j.error) || 'Không đọc được sổ'); return; }
       if (j.pgen && j.pgen !== S.pgen) loadPhotos(); // ảnh chỉ tải lại khi có ảnh mới / sửa / xoá
+      if (j.ver && j.ver !== S.srvVer) { S.srvVer = j.ver; saveCfg(); if (j.same) render(); } // máy chủ vừa lên bản mới → bỏ cảnh báo ngay
       if (j.same) return; // dữ liệu không đổi → không tải, không vẽ lại
       cfg.gen = j.gen || '';
       var tmp = S.rows.concat(S.moves).filter(function (r) { return r._tmp; }), ids = {};
@@ -3444,14 +3446,32 @@ var AL = (function () {
     var lm = document.createElement('link'); lm.rel = 'manifest'; lm.href = 'manifest.webmanifest'; document.head.appendChild(lm);
     var la = document.createElement('link'); la.rel = 'apple-touch-icon'; la.href = 'apple-touch-icon.png'; document.head.appendChild(la);
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(function () {});
+      navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(function (rg) { try { rg.update(); } catch (e) {} }).catch(function () {});
       navigator.serviceWorker.addEventListener('message', function (e) {
         if (e.data === 'new-version') toast('Đã có bản app mới', 'Tải lại', function () { if (cfgT) saveCfgNow(); location.reload(); });
       });
     }
   }
+  // Tự kiểm tra bản mới (không trông vào service worker – iPad / iPhone hay dừng nó trước khi kịp tải bản mới):
+  // đọc số bản trong index.html trên GitHub; khác bản đang chạy → lưu bản mới vào máy rồi tự mở lại (nếu không đang nhập dở).
+  var VCK = 0;
+  function chkVer() {
+    if (window.DEMO || location.protocol !== 'https:' && location.hostname !== 'localhost' || Date.now() - VCK < 60000) return; VCK = Date.now();
+    fetch('./index.html?nv=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) {
+      var m = /var VER = '([^']+)'/.exec(t || ''); if (!m || m[1] === VER) return;
+      var hd = { headers: { 'Content-Type': 'text/html; charset=utf-8' } }, base = new URL('./', location.href).href;
+      var put = window.caches ? caches.open(SW_CACHE).then(function (c) { return Promise.all([c.put(base, new Response(t, hd)), c.put(base + 'index.html', new Response(t, hd))]); }).catch(function () {}) : Promise.resolve();
+      put.then(function () {
+        var k = 'tcgd-rl-' + m[1], busy = document.querySelector('.mask:not(.hide)') || (cfg.out || []).length && !navigator.onLine;
+        var go = function () { if (cfgT) saveCfgNow(); try { sessionStorage.setItem(k, '1'); } catch (e) {} location.reload(); };
+        var tried = false; try { tried = !!sessionStorage.getItem(k); } catch (e) {}
+        if (!busy && !tried) go(); else toast('Đã có bản app mới ' + m[1], 'Tải lại', go, 15000);
+      });
+    }).catch(function () {});
+  }
+  setTimeout(chkVer, 1500);
   window.addEventListener('pagehide', function () { if (cfgT) saveCfgNow(); });
-  document.addEventListener('visibilitychange', function () { if (document.hidden) { if (cfgT) saveCfgNow(); if (!S.hide) { S.hide = true; render(); } return; } if (cfg.token) load(true); });
+  document.addEventListener('visibilitychange', function () { if (document.hidden) { if (cfgT) saveCfgNow(); if (!S.hide) { S.hide = true; render(); } return; } chkVer(); if (cfg.token) load(true); });
   setInterval(function () { if (!document.hidden && cfg.token && !active) load(true); }, 60000);
 
   if (window.DEMO) { cfg.url = 'demo'; cfg.token = cfg.token || 'demo123'; }

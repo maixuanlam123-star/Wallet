@@ -1,7 +1,7 @@
 // Thu chi gia đình – service worker
 // Mở app tức thì: trả bản đã lưu trong máy ngay, đồng thời tải bản mới ở nền;
 // nếu index.html có thay đổi thì báo app hiện nút "Tải lại".
-var CACHE = 'thu-chi-v1';
+var CACHE = 'thu-chi-v2'; // đổi tên → máy xoá bộ nhớ cũ, lấy bản mới (phải giống SW_CACHE trong index.html)
 self.addEventListener('install', function (e) {
   self.skipWaiting();
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(['./', './manifest.webmanifest', './icon-192.png']).catch(function () {}); }));
@@ -16,13 +16,14 @@ self.addEventListener('fetch', function (e) {
   var req = e.request, url = new URL(req.url);
   if (req.method !== 'GET') return;                                   // gọi máy chủ Apps Script: không đụng tới
   if (/script\.google|googleusercontent|generativelanguage/.test(url.hostname)) return;
+  if (url.searchParams.has('nv')) return;                            // app tự kiểm tra bản mới: luôn hỏi mạng, không lưu
   var page = req.mode === 'navigate';
   var key = page ? new Request(new URL('./', self.registration.scope).href) : req;
   e.respondWith(caches.open(CACHE).then(function (c) {
     return c.match(key, { ignoreSearch: page }).then(function (old) {
       var net = (page ? fetch(key.url, { cache: 'no-cache', credentials: 'same-origin' }) : fetch(req)).then(function (res) {
         if (res && (res.ok || res.type === 'opaque')) {
-          var changed = old && page && sig(old) !== sig(res);
+          var changed = old && page && sig(old) && sig(old) !== sig(res);
           c.put(key, res.clone());
           // đợi trang mới chạy xong rồi mới báo (báo ngay thì trang cũ đang đóng nhận mất)
           if (changed) return new Promise(function (ok) { setTimeout(ok, 2000); }).then(function () {
