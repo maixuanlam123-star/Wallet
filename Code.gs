@@ -8,12 +8,12 @@
  * Khoá Gemini: nhập trong app (Menu → Khoá đọc bill). Không cần sửa file này.
  */
 
-var VER = '28/11/2026-k'; // luôn giống VER trong index.html (máy chủ nạp từ GitHub dùng để biết có bản mới)
+var VER = '28/11/2026-l'; // luôn giống VER trong index.html (máy chủ nạp từ GitHub dùng để biết có bản mới)
 var SHEET = 'THU CHI GIA ĐÌNH';
 var HEAD = ['ID', 'Ngày', 'Loại', 'Mục', 'Số tiền', 'Nội dung', 'Nơi mua / Người nhận', 'Chi tiết', 'Nguồn', 'Thời gian nhập', 'Tiền mặt / Ngân hàng', 'Người ghi', 'Dự án', 'Vai trò trong dự án'];
 // vai trò của một khoản trong dự án (ghi chữ ra Sheet cho dễ đọc)
-var JROLE = { von: 'Vốn gia đình bỏ vào', gop: 'Nhận vốn góp', vay: 'Vay / mượn', tra: 'Trả gốc / hoàn vốn', lai: 'Trả lãi / chia lời', cp: 'Chi phí dự án', dt: 'Doanh thu / lợi nhuận' };
-function jrOf_(v) { var s = normVN_(v); for (var k in JROLE) if (s && (s === k || s === normVN_(JROLE[k]))) return k; return ''; }
+var JROLE = { von: 'Vốn gia đình bỏ vào', gop: 'Nhận vốn góp', vay: 'Vay / mượn', tra: 'Trả gốc vay', hv: 'Hoàn vốn góp', lai: 'Trả lãi / chia lời', cp: 'Chi phí dự án', dt: 'Doanh thu / lợi nhuận' };
+function jrOf_(v) { var s = normVN_(v); if (s === 'tra goc hoan von') return 'tra'; for (var k in JROLE) if (s && (s === k || s === normVN_(JROLE[k]))) return k; return ''; } // tên cũ 'Trả gốc / hoàn vốn' = trả gốc vay
 var NCOL = HEAD.length;
 // vay nợ: Loại = Vay / Trả nợ / Cho vay / Thu nợ, Mục = Cá nhân / Ngân hàng / Vợ chồng, Nơi mua / Người nhận = tên người cho vay
 var NOV = { vay: 'Vay', tra: 'Trả nợ', cho: 'Cho vay', thu: 'Thu nợ' };

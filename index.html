@@ -1029,7 +1029,7 @@ var AL = (function () {
 <script>
 (function () {
   'use strict';
-  var VER = '28/11/2026-k';
+  var VER = '28/11/2026-l';
   var SW_CACHE = 'thu-chi-v2'; // phải giống CACHE trong sw.js
   var LS = 'thu-chi-gd', LS_REV = 'thu-chi-gd-review', LS_TH = 'thu-chi-gd-theme';
   var THEMES = [['muc', 'Xanh dương', '#2448a8'], ['ngoc', 'Ngọc bích', '#0b8a75'], ['dao', 'Hồng đào', '#d0396f'],
@@ -1591,10 +1591,10 @@ var AL = (function () {
   }
   // tổng hợp dự án (mọi kỳ, cả hai người – dự án chung của gia đình)
   function pjSum(n) {
-    var o = { von: 0, gop: 0, vay: 0, tra: 0, lai: 0, cp: 0, dt: 0, k: 0, from: '', to: '' };
+    var o = { von: 0, gop: 0, vay: 0, tra: 0, hv: 0, lai: 0, cp: 0, dt: 0, k: 0, from: '', to: '' };
     S.rows.forEach(function (r) { if (r.j !== n) return; var k = r.jr || guessJr(r.t, r.c, r.n); o[k] += r.a; o.k++; if (!o.from || r.d < o.from) o.from = r.d; if (r.d > o.to) o.to = r.d; });
     S.moves.forEach(function (r) { if (r.j !== n || r.t !== 'no' || /~$/.test(r.id)) return; var k = r.v === 'vay' ? 'vay' : r.v === 'tra' ? 'tra' : r.v === 'cho' ? 'cp' : 'dt'; o[k] += r.a; o.k++; if (!o.from || r.d < o.from) o.from = r.d; if (r.d > o.to) o.to = r.d; });
-    o.vao = o.von + o.gop + o.vay; o.no = o.gop + o.vay - o.tra; o.ll = o.dt - o.cp - o.lai;
+    o.vao = o.von + o.gop + o.vay; o.no = Math.max(0, o.vay - o.tra); o.ll = o.dt - o.cp - o.lai; // vốn góp là phần hùn, không phải nợ: chỉ tiền vay mới phải trả
     return o;
   }
   function pjSection() {
@@ -1604,8 +1604,8 @@ var AL = (function () {
       var o = pjSum(n), m = function (lbl, v, cls) { return '<div><small>' + lbl + '</small><b class="' + (cls || '') + '">' + mk(short(v)) + '</b></div>'; };
       return '<div class="card pjc"><div class="pjt"><b>' + esc(n) + '</b><span class="pjs">' + o.k + ' khoản' + (o.from ? ', từ ' + dmy(o.from).slice(3) : '') + '</span><button class="pjeye" data-pjeye aria-label="' + (S.hide ? 'Hiện số liệu' : 'Ẩn số liệu') + '"><svg class="i" viewBox="0 0 24 24">' + (S.hide ? EYE_OFF : EYE_ON) + '</svg></button></div>' +
         '<div class="pjv">' + mk(fmt(o.vao)) + ' đ</div><div class="pjs">Tổng vốn đã vào dự án (gia đình + góp + vay)</div>' +
-        '<div class="pjg">' + m('Gia đình bỏ vào', o.von) + m('Vốn góp nhận', o.gop) + m('Vay / mượn', o.vay) + m('Còn phải trả (góp + vay)', o.no, o.no > 0 ? 'neg' : '') +
-        m('Đã trả gốc / hoàn vốn', o.tra) + m('Đã trả lãi / chia lời', o.lai) + m('Chi phí dự án', o.cp) + m('Doanh thu / lợi nhuận', o.dt, 'pos') + '</div>' +
+        '<div class="pjg">' + m('Gia đình bỏ vào', o.von) + m('Vốn góp nhận', o.gop) + m('Vay / mượn', o.vay) + m('Còn nợ vay', o.no, o.no > 0 ? 'neg' : '') +
+        m('Đã trả gốc vay', o.tra) + m('Đã trả lãi / chia lời', o.lai) + m('Chi phí dự án', o.cp) + m('Doanh thu / lợi nhuận', o.dt, 'pos') + '</div>' +
         '<div class="pjs" style="margin-top:10px">Lãi / lỗ dự án đến nay: <b class="' + (o.ll < 0 ? 'neg' : 'pos') + '" style="color:var(--' + (o.ll < 0 ? 'chi' : 'thu') + ')">' + mk((o.ll < 0 ? '−' : '+') + fmt(Math.abs(o.ll))) + ' đ</b> (doanh thu − chi phí − lãi)</div>' +
         '<div class="pjb"><button class="sb p" data-pjsee="' + esc(n) + '">Xem các khoản</button><button class="sb" data-pjadd="' + esc(n) + '">Thêm khoản cũ</button><button class="sb" data-pjnew="' + esc(n) + '">Ghi khoản mới</button></div></div>';
     }).join('');
@@ -1928,11 +1928,11 @@ var AL = (function () {
   function srvWarn() { return '<div class="srvw">Máy chủ (Code.gs) đang là bản ' + esc(S.srvVer) + ', chưa lưu được Dự án và Vay nợ. Tải file Code.gs mới lên GitHub (cùng chỗ với index.html), đợi 2 phút rồi bấm nút tải lại. Nếu chưa dùng NapMayChu: dán Code.gs vào Apps Script → Triển khai → Quản lý → Sửa → Phiên bản mới.</div>'; }
   function srvBlock(el) { if (!srvOld()) return false; if (el) el.innerHTML = srvWarn(); else toast('Máy chủ chưa cập nhật bản mới (Code.gs) nên chưa lưu được. Xem hướng dẫn trong Sổ vay nợ.', null, null, 7000); return true; }
   /* ---------- dự án: gom vốn bỏ vào, vốn góp, vay mượn, trả gốc, trả lãi, chi phí, doanh thu của cùng một dự án ---------- */
-  var JR = { von: ['Vốn gia đình bỏ vào', 'chi'], gop: ['Nhận vốn góp', 'thu'], vay: ['Vay / mượn', 'thu'], tra: ['Trả gốc / hoàn vốn', 'chi'], lai: ['Trả lãi / chia lời', 'chi'], cp: ['Chi phí dự án', 'chi'], dt: ['Doanh thu / lợi nhuận', 'thu'] };
+  var JR = { von: ['Vốn gia đình bỏ vào', 'chi'], gop: ['Nhận vốn góp', 'thu'], vay: ['Vay / mượn', 'thu'], tra: ['Trả gốc vay', 'chi'], hv: ['Hoàn vốn góp', 'chi'], lai: ['Trả lãi / chia lời', 'chi'], cp: ['Chi phí dự án', 'chi'], dt: ['Doanh thu / lợi nhuận', 'thu'] };
   function guessJr(t, c, n) {
     var x = norm((n || '') + ' ' + (c || ''));
     if (t === 'thu') return /vay|muon/.test(x) ? 'vay' : /gop|goi von|\bvon\b/.test(x) ? 'gop' : 'dt';
-    return /chia loi|chia lai|tra lai|tien lai|lai vay|lai gop|lai suat/.test(x) ? 'lai' : /tra no|tra goc|hoan von|tra vay/.test(x) ? 'tra' : isInv(c) || /\bvon\b|dau tu/.test(x) ? 'von' : 'cp';
+    return /chia loi|chia lai|tra lai|tien lai|lai vay|lai gop|lai suat/.test(x) ? 'lai' : /hoan von|tra von gop|rut von/.test(x) ? 'hv' : /tra no|tra goc|tra vay/.test(x) ? 'tra' : isInv(c) || /\bvon\b|dau tu/.test(x) ? 'von' : 'cp';
   }
   function pjNames() { var o = S.projects.slice(); S.rows.forEach(function (r) { if (r.j && o.indexOf(r.j) < 0) o.push(r.j); }); return o; }
   function hh(r) { return !r.j; } // khoản sinh hoạt gia đình (không thuộc dự án)
