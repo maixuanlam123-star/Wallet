@@ -262,6 +262,7 @@ h2.sec button{border:0;background:none;color:var(--pri);font-weight:600;font-siz
 .li .a.no{color:#7a5af8}
 .ncl{display:flex;flex-direction:column;gap:10px;margin:10px 0;max-height:55vh;overflow:auto}.ncr{background:var(--soft);border-radius:12px;padding:10px}.ncr label{display:flex;gap:10px;align-items:flex-start}.ncr label b,.ncr label small{display:block}.ncr small{color:var(--mut)}.ncf{display:grid;grid-template-columns:120px 1fr;gap:8px;margin-top:8px}
 .srvw{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--ink);border-radius:12px;padding:10px 12px;font-size:13px;margin:0 0 10px}
+.rw.pjr.need{box-shadow:inset 0 0 0 2px var(--inv)}.rw.pjr.need select#edJ{color:var(--inv);font-weight:700}
 .rcl{margin:4px -16px 8px;max-height:58vh;overflow:auto}.rcl .li{padding:10px 16px}.rcl .li .c{flex-wrap:wrap;row-gap:3px}.rcl .li .c>span:first-child{flex:1 1 100%}#rcH b.thu{color:var(--thu)}
 .lg button{display:block;width:100%;border:0;background:none;padding:8px 0;text-align:left}
 .lg .r1{display:flex;gap:10px;align-items:center}
@@ -670,9 +671,9 @@ body:has(.mask:not(.hide)) .toast{bottom:auto;top:calc(14px + env(safe-area-inse
   <div class="rows">
     <div class="rw ac"><svg class="i" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg><input id="edN" autocomplete="off" placeholder="Nội dung" aria-label="Nội dung" enterkeyhint="done"><button class="xb hide" id="edXb" type="button" aria-expanded="false"><svg class="i" viewBox="0 0 24 24"><path d="M6 3h12v18l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4L6 21z"/><path d="M9.5 8h5M9.5 12h5"/></svg><span id="edXs"></span></button><div class="acl hide" id="edNs"></div></div>
     <div class="det hide" id="edX"></div>
+    <div class="rw pjr hide" id="edJw"><svg class="i" viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13M9 21v-6h6v6"/></svg><select id="edJ" aria-label="Dự án"></select><select id="edJr" aria-label="Vai trò trong dự án"></select><input id="edJn" class="hide" placeholder="Tên dự án mới" maxlength="60" enterkeyhint="done"></div>
     <div class="rw"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><div class="dq" id="edDq"><button data-d="0">Hôm nay</button><button data-d="1">Hôm qua</button><input type="date" id="edD" aria-label="Chọn ngày khác"></div></div>
     <div class="rw"><svg class="i" viewBox="0 0 24 24"><path d="M3 9l1.5-5h15L21 9M3 9h18v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0zM5 13v8h14v-8"/></svg><input id="edP" autocomplete="off" list="edPl" placeholder="Nơi mua / người nhận" aria-label="Nơi mua / người nhận" enterkeyhint="done"><datalist id="edPl"></datalist></div>
-    <div class="rw pjr hide" id="edJw"><svg class="i" viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13M9 21v-6h6v6"/></svg><select id="edJ" aria-label="Dự án"></select><select id="edJr" aria-label="Vai trò trong dự án"></select><input id="edJn" class="hide" placeholder="Tên dự án mới" maxlength="60" enterkeyhint="done"></div>
   </div>
   <div class="wn" id="edW"></div>
   </div>
@@ -1028,7 +1029,7 @@ var AL = (function () {
 <script>
 (function () {
   'use strict';
-  var VER = '28/11/2026-h';
+  var VER = '28/11/2026-i';
   var LS = 'thu-chi-gd', LS_REV = 'thu-chi-gd-review', LS_TH = 'thu-chi-gd-theme';
   var THEMES = [['muc', 'Xanh dương', '#2448a8'], ['ngoc', 'Ngọc bích', '#0b8a75'], ['dao', 'Hồng đào', '#d0396f'],
     ['tim', 'Tím', '#6741d9'], ['dat', 'Cam đất', '#c2561c'], ['la', 'Lá chuối', '#3f7d20']];
@@ -2704,6 +2705,7 @@ var AL = (function () {
   function paintJ() {
     var v = ed.v, L = pjNames(), show = !!(L.length || isInv(v.c) || v.j);
     $('edJw').classList.toggle('hide', !show); if (!show) return;
+    $('edJw').classList.toggle('need', !v.j && isInv(v.c) && L.length > 0); // khoản đầu tư chưa gắn dự án: làm nổi để chọn
     if (v.j && L.indexOf(v.j) < 0) L.push(v.j);
     $('edJ').innerHTML = '<option value="">Không thuộc dự án</option>' + L.map(function (n) { return '<option' + (n === v.j ? ' selected' : '') + '>' + esc(n) + '</option>'; }).join('') + '<option value="__new">+ Dự án mới…</option>';
     if (v.j && (!v.jr || !ed.pickedJr || JR[v.jr][1] !== (v.t === 'thu' ? 'thu' : 'chi'))) v.jr = guessJr(v.t, v.c, v.n);
