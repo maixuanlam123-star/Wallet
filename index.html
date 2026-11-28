@@ -261,7 +261,8 @@ h2.sec button{border:0;background:none;color:var(--pri);font-weight:600;font-siz
 .nod{margin:14px 0 2px;font-size:12.5px;color:var(--mut);font-weight:600}
 .li .a.no{color:#7a5af8}
 .ncl{display:flex;flex-direction:column;gap:10px;margin:10px 0;max-height:55vh;overflow:auto}.ncr{background:var(--soft);border-radius:12px;padding:10px}.ncr label{display:flex;gap:10px;align-items:flex-start}.ncr label b,.ncr label small{display:block}.ncr small{color:var(--mut)}.ncf{display:grid;grid-template-columns:120px 1fr;gap:8px;margin-top:8px}
-.rcl{margin:4px -16px 8px;max-height:58vh;overflow:auto}.rcl .li{padding:10px 16px}#rcH b.thu{color:var(--thu)}
+.srvw{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--ink);border-radius:12px;padding:10px 12px;font-size:13px;margin:0 0 10px}
+.rcl{margin:4px -16px 8px;max-height:58vh;overflow:auto}.rcl .li{padding:10px 16px}.rcl .li .c{flex-wrap:wrap;row-gap:3px}.rcl .li .c>span:first-child{flex:1 1 100%}#rcH b.thu{color:var(--thu)}
 .lg button{display:block;width:100%;border:0;background:none;padding:8px 0;text-align:left}
 .lg .r1{display:flex;gap:10px;align-items:center}
 .lg .r1 .tile{width:32px;height:32px;border-radius:10px}
@@ -346,7 +347,7 @@ select.in2{appearance:auto}
 .edMid{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;margin:0 -16px;padding:0 16px 2px;scrollbar-width:thin}
 .edTop,.edCap,.edAmt,.sheet.ed .sugA,.kp{flex:none}
 .edTop{display:grid;grid-template-columns:42px 1fr 42px;gap:10px;align-items:center;padding:4px 0}
-.edTop .seg{max-width:260px;width:100%;margin:0 auto}
+.edTop .seg{max-width:300px;width:100%;margin:0 auto}
 .edTop .seg button{padding:8px}
 .ib2{width:42px;height:42px;border-radius:14px;border:0;background:var(--soft);color:var(--mut);display:grid;place-items:center}
 .ib2 svg.i{width:19px;height:19px}
@@ -658,7 +659,7 @@ body:has(.mask:not(.hide)) .toast{bottom:auto;top:calc(14px + env(safe-area-inse
 <div class="mask hide" id="edM"><div class="sheet ed" role="dialog" aria-modal="true" aria-labelledby="edT">
   <div class="edTop">
     <button class="ib2" data-close aria-label="Đóng"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
-    <div class="seg" id="edType"><button data-v="chi" class="chi">Chi ra</button><button data-v="thu" class="thu">Thu vào</button></div>
+    <div class="seg" id="edType"><button data-v="chi" class="chi">Chi ra</button><button data-v="thu" class="thu">Thu vào</button><button data-v="no" class="vno" id="edNo">Vay nợ</button></div>
     <button class="ib2 del hide" id="edDel" aria-label="Xoá khoản này"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
   </div>
   <div class="edCap w"><span id="edT">Thêm khoản</span><div class="wsel" id="edWl" role="group" aria-label="Trả bằng"><button data-w="tm" type="button"><svg class="i" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg>Tiền mặt</button><button data-w="nh" type="button"><svg class="i" viewBox="0 0 24 24"><path d="m3 10 9-6 9 6M5 10v8M12 10v8M19 10v8M3 21h18"/></svg>Ngân hàng</button></div></div>
@@ -843,13 +844,14 @@ body:has(.mask:not(.hide)) .toast{bottom:auto;top:calc(14px + env(safe-area-inse
 </div></div>
 
 <div class="mask hide" id="noM"><div class="sheet">
-  <h2><span>Sổ vay nợ</span><button data-close aria-label="Đóng"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></h2>
+  <h2><span>Sổ vay nợ</span><button class="pjeye" id="noEye" aria-label="Hiện / ẩn số liệu" style="margin:0 8px 0 auto"></button><button data-close aria-label="Đóng"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></h2>
+  <div id="noOld"></div>
   <div class="nos" id="noS"></div>
   <div class="pjb" style="margin:12px 0 4px"><button class="sb p" id="noAdd">Ghi khoản vay</button><button class="sb" id="noAdd2">Cho người khác vay</button></div>
   <div class="nol" id="noL"></div>
 </div></div>
 <div class="mask hide" id="nlM"><div class="sheet">
-  <h2><span id="nlT">Người cho vay</span><button data-close aria-label="Đóng"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></h2>
+  <h2><span id="nlT">Người cho vay</span><button class="pjeye" id="nlEye" aria-label="Hiện / ẩn số liệu" style="margin:0 8px 0 auto"></button><button data-close aria-label="Đóng"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></h2>
   <div class="nos" id="nlS"></div>
   <div class="pjb" id="nlB" style="margin:12px 0 4px"></div>
   <div class="rcl" id="nlL"></div>
@@ -1026,7 +1028,7 @@ var AL = (function () {
 <script>
 (function () {
   'use strict';
-  var VER = '28/11/2026-e';
+  var VER = '28/11/2026-h';
   var LS = 'thu-chi-gd', LS_REV = 'thu-chi-gd-review', LS_TH = 'thu-chi-gd-theme';
   var THEMES = [['muc', 'Xanh dương', '#2448a8'], ['ngoc', 'Ngọc bích', '#0b8a75'], ['dao', 'Hồng đào', '#d0396f'],
     ['tim', 'Tím', '#6741d9'], ['dat', 'Cam đất', '#c2561c'], ['la', 'Lá chuối', '#3f7d20']];
@@ -1134,15 +1136,23 @@ var AL = (function () {
   /* ---------- trạng thái ---------- */
   var cfg = {};
   try { cfg = JSON.parse(localStorage.getItem(LS) || '{}'); } catch (e) {}
+  // hàng chờ gửi lưu riêng (nhỏ, ghi ngay khi bấm Lưu) – sổ lớn ghi sau, không làm chậm thao tác
+  var LS_OUT = LS + '-out';
+  try { var o2 = JSON.parse(localStorage.getItem(LS_OUT) || '[]'), seen = {}; cfg.out = (cfg.out || []).concat(o2).filter(function (r) { if (!r || seen[r.id]) return false; seen[r.id] = 1; return true; }); } catch (e) {}
   var S = {
     rows: (cfg.rows || []).concat((cfg.out || []).filter(function (r) { return !isMv(r); }).map(function (r) { r._tmp = 1; return r; })), moves: (cfg.moves || []).concat((cfg.out || []).filter(isMv).map(function (r) { r._tmp = 1; return r; })), photos: cfg.photos || [], phDir: cfg.phDir || '', pgen: cfg.pgen || '', phOff: 0, bal: cfg.bal || null, cats: cfg.cats || { chi: ['Chi khác'], thu: ['Thu khác'] }, hasKey: !!cfg.hasKey, budget: cfg.budget || { total: 0, cats: {} },
     mode: 'm', ym: todayVN().slice(0, 7), y: todayVN().slice(0, 4), view: 'home', q: '', fc: '', ft: '', fd: '', fw: '', fj: '', projects: cfg.projects || [], hide: true, limit: 60,
-    queue: [], review: localStorage.getItem(LS_REV) === '1', srvVer: '',
+    queue: [], review: localStorage.getItem(LS_REV) === '1', srvVer: cfg.srvVer || '',
     events: cfg.events || [], calOn: !!cfg.calOn, me: cfg.me || 'c', users: cfg.users || { c: 'Chồng', v: 'Vợ', vOn: false }, rw: '', cm: todayVN().slice(0, 7), cd: todayVN()
   };
-  function saveCfg() {
+  var cfgT = 0;
+  function saveCfg() { // gộp nhiều lần lưu liền nhau, ghi khi rảnh
     if (typeof HIST === 'object' && HIST) HIST.k = ''; // gợi ý nội dung tính lại khi sổ đổi
-    cfg.rows = S.rows.filter(function (r) { return !r._tmp; }); cfg.cats = S.cats; cfg.hasKey = S.hasKey; cfg.budget = S.budget; cfg.events = S.events; cfg.calOn = S.calOn; cfg.me = S.me; cfg.users = S.users; cfg.moves = S.moves.filter(function (r) { return !r._tmp; }); cfg.bal = S.bal; cfg.projects = S.projects; cfg.photos = S.photos; cfg.phDir = S.phDir; cfg.pgen = S.pgen; cfg.tokens = cfg.tokens || {}; if (cfg.token) cfg.tokens[S.me] = cfg.token;
+    if (cfgT) return; cfgT = setTimeout(saveCfgNow, 250);
+  }
+  function saveCfgNow() {
+    if (cfgT) { clearTimeout(cfgT); cfgT = 0; }
+    cfg.rows = S.rows.filter(function (r) { return !r._tmp; }); cfg.cats = S.cats; cfg.hasKey = S.hasKey; cfg.budget = S.budget; cfg.events = S.events; cfg.calOn = S.calOn; cfg.me = S.me; cfg.users = S.users; cfg.moves = S.moves.filter(function (r) { return !r._tmp; }); cfg.bal = S.bal; cfg.projects = S.projects; cfg.srvVer = S.srvVer; cfg.photos = S.photos; cfg.phDir = S.phDir; cfg.pgen = S.pgen; cfg.tokens = cfg.tokens || {}; if (cfg.token) cfg.tokens[S.me] = cfg.token;
     try { localStorage.setItem(LS, JSON.stringify(cfg)); } catch (e) {}
   }
 
@@ -1175,12 +1185,14 @@ var AL = (function () {
   }
   function netErr(e) { return /fetch|network|load/i.test(e && e.message) ? 'Mất kết nối mạng' : (e && e.message) || 'Lỗi không rõ'; }
 
-  var loading = false;
+  var loading = false, loadAgain = false;
   function load(quiet, force) {
-    if (loading) return Promise.resolve();
-    loading = true; $('btnSync').style.opacity = .5;
+    if (loading) { if (force) loadAgain = true; return Promise.resolve(); } // đang tải: tải lại ngay sau khi xong (vd. vừa đổi người dùng)
+    loading = true; loadAgain = false; $('btnSync').style.opacity = .5;
+    var tok = cfg.token;
     return callScript({ action: 'list', gen: force || !S.rows.length ? '' : cfg.gen }).then(function (j) {
       loading = false; $('btnSync').style.opacity = '';
+      if (tok !== cfg.token || loadAgain) { loadAgain = false; return load(quiet, true); } // kết quả của người dùng trước (đã đổi người giữa chừng) → bỏ, tải lại
       if (!j || !j.ok) { if (!quiet) toast((j && j.error) || 'Không đọc được sổ'); return; }
       if (j.pgen && j.pgen !== S.pgen) loadPhotos(); // ảnh chỉ tải lại khi có ảnh mới / sửa / xoá
       if (j.same) return; // dữ liệu không đổi → không tải, không vẽ lại
@@ -1192,7 +1204,7 @@ var AL = (function () {
       S.rows = all.filter(function (r) { return !isMv(r); }); S.moves = all.filter(isMv); S.bal = j.bal || null;
       S.cats = j.cats; S.hasKey = j.hasKey; S.srvVer = j.ver || ''; if (j.budget) S.budget = j.budget; if (j.events) S.events = j.events; S.calOn = !!j.calOn; if (j.projects) S.projects = j.projects; if (j.users) S.users = j.users; if (j.me) S.me = j.me;
       saveCfg(); render(); autoOrph(); setTimeout(flushOut, 300);
-    }).catch(function (e) { loading = false; $('btnSync').style.opacity = ''; if (!quiet) toast(netErr(e)); });
+    }).catch(function (e) { loading = false; $('btnSync').style.opacity = ''; if (tok !== cfg.token || loadAgain) { loadAgain = false; return load(quiet, true); } if (!quiet) toast(netErr(e)); });
   }
   $('btnSync').onclick = function () { load(false, true).then(function () { toast('Đã cập nhật sổ'); }); };
 
@@ -1213,7 +1225,7 @@ var AL = (function () {
     $('vLogin').classList.add('hide'); ['vMain', 'nav', 'top'].forEach(function (id) { $(id).classList.remove('hide'); });
     render(); load(); handleShare();
   }
-  function logout(msg) { try { localStorage.removeItem(LS_K); } catch (e) {} delete cfg.token; cfg.tokens = {}; cfg.rows = []; S.rows = []; S.moves = []; S.bal = null; S.photos = []; S.pgen = ''; phClear(); saveCfg(); closeAll(); showLogin(msg); }
+  function logout(msg) { try { localStorage.removeItem(LS_K); } catch (e) {} delete cfg.token; cfg.tokens = {}; cfg.rows = []; S.rows = []; S.moves = []; S.bal = null; S.photos = []; S.pgen = ''; phClear(); saveCfgNow(); closeAll(); showLogin(msg); }
   $('lgGo').onclick = function () {
     var url = ($('lgUrlW').classList.contains('hide') ? srvUrl() : $('lgUrl').value.trim()) || '', pass = $('lgPass').value;
     if (!window.DEMO && !/^https:\/\/script\.google(usercontent)?\.com\/.+/.test(url)) { $('lgMsg').textContent = 'Địa chỉ phải bắt đầu bằng https://script.google.com/'; return; }
@@ -1651,13 +1663,24 @@ var AL = (function () {
     var b = e.target.closest('#pjNew,#pjNew2,[data-pjsee],[data-pjadd],[data-pjnew]'); if (!b) return;
     e.stopPropagation();
     if (b.id === 'pjNew' || b.id === 'pjNew2') { $('pnN').value = ''; show('pnM'); setTimeout(function () { $('pnN').focus(); }, 80); return; }
-    if (b.dataset.pjsee) { S.fj = b.dataset.pjsee; S.view = 'list'; S.limit = 200; render(); window.scrollTo(0, 0); return; }
+    if (b.dataset.pjsee) { openPjL(b.dataset.pjsee); return; }
     if (b.dataset.pjadd) { openPj(b.dataset.pjadd); return; }
     openEd(null, { pre: { t: 'chi', c: S.cats.chi.find(function (c) { return isInv(c) && /du an/.test(norm(c)); }) || S.cats.chi.find(isInv) || '', j: b.dataset.pjnew } });
   }, true);
   $('vRep').onclick = function (e) { var w = e.target.closest('[data-rw]'); if (w) { S.rw = w.dataset.rw; render(); return; } var b = e.target.closest('[data-c]'); if (!b) return; openRc(b.dataset.c, b.dataset.t || 'chi'); };
+  // popup các khoản của một dự án (mọi kỳ, cả hai người)
+  function openPjL(n) {
+    var L = S.rows.concat(S.moves).filter(function (r) { return r.j === n && !/~$/.test(r.id); }).sort(function (a, b) { return a.d < b.d ? 1 : a.d > b.d ? -1 : b.a - a.a; });
+    S.rc = ''; S.rcJ = n;
+    $('rcT').textContent = n;
+    $('rcH').textContent = L.length ? L.length + ' khoản, từ ' + dmy(L[L.length - 1].d) + ' đến ' + dmy(L[0].d) + '. Bấm một khoản để sửa hoặc đổi vai trò.' : 'Chưa có khoản nào. Bấm "Thêm khoản cũ" để chọn các khoản đã ghi, hoặc "Ghi khoản mới".';
+    $('rcL').innerHTML = L.map(function (r) { return liHtml(r, true); }).join('');
+    $('rcPj').classList.add('hide'); $('rcGo').textContent = 'Thêm khoản cũ';
+    show('rcM');
+  }
   // popup các khoản của một mục trong báo cáo
   function openRc(c, t) {
+    S.rcJ = ''; $('rcGo').textContent = 'Xem trong Sổ';
     var L = (S.rr || []).filter(function (r) { return r.t === t && (r.c === c || grp(r.c) === c); }).sort(function (a, b) { return a.d < b.d ? 1 : a.d > b.d ? -1 : b.a - a.a; });
     var sum = L.reduce(function (x, r) { return x + r.a; }, 0);
     S.rc = c;
@@ -1669,7 +1692,7 @@ var AL = (function () {
     show('rcM');
   }
   $('rcM').addEventListener('click', function (e) { if (e.target.closest('.li')) hide('rcM'); });
-  $('rcGo').onclick = function () { hide('rcM'); S.fc = S.rc; S.fd = ''; S.view = 'list'; render(); window.scrollTo(0, 0); };
+  $('rcGo').onclick = function () { hide('rcM'); if (S.rcJ) { openPj(S.rcJ); return; } S.fc = S.rc; S.fd = ''; S.view = 'list'; render(); window.scrollTo(0, 0); };
   $('rcPj').onclick = function () { hide('rcM'); var n = pjNames()[0]; if (n) openPj(n); else { $('pnN').value = ''; show('pnM'); } };
 
   /* ---------- lịch vạn niên & ngày giỗ ---------- */
@@ -1895,6 +1918,12 @@ var AL = (function () {
   function clean(r) { var o = { id: r.id, d: r.d, t: r.t, c: r.c, a: r.a, n: r.n, p: r.p, x: r.x || '', s: r.s || 'tay', w: r.w || '', j: r.j || '', jr: r.j && r.t !== 'no' ? r.jr || '' : '' }; if (r.t === 'no') o.v = r.v; if (r.u) o.u = r.u; return o; }
   // khoản không tính thu chi: rút / nộp (ck) và vay nợ (no) – nằm trong S.moves
   function isMv(r) { return r.t === 'ck' || r.t === 'no'; }
+  // máy chủ (Code.gs) cũ chưa biết cột Dự án / Vay nợ → lưu sẽ mất thông tin (vay bị ghi thành chi) → chặn và nhắc cập nhật
+  var SRV_MIN = '28/11/2026-e';
+  function vNum(v) { var m = /^(\d\d)\/(\d\d)\/(\d{4})-?([a-z]?)/.exec(v || ''); return m ? +(m[3] + m[2] + m[1]) * 100 + (m[4] ? m[4].charCodeAt(0) - 96 : 0) : 0; }
+  function srvOld() { return !!S.srvVer && vNum(S.srvVer) < vNum(SRV_MIN); }
+  function srvWarn() { return '<div class="srvw">Máy chủ (Code.gs) đang là bản ' + esc(S.srvVer) + ', chưa lưu được Dự án và Vay nợ. Tải file Code.gs mới lên GitHub (cùng chỗ với index.html), đợi 2 phút rồi bấm nút tải lại. Nếu chưa dùng NapMayChu: dán Code.gs vào Apps Script → Triển khai → Quản lý → Sửa → Phiên bản mới.</div>'; }
+  function srvBlock(el) { if (!srvOld()) return false; if (el) el.innerHTML = srvWarn(); else toast('Máy chủ chưa cập nhật bản mới (Code.gs) nên chưa lưu được. Xem hướng dẫn trong Sổ vay nợ.', null, null, 7000); return true; }
   /* ---------- dự án: gom vốn bỏ vào, vốn góp, vay mượn, trả gốc, trả lãi, chi phí, doanh thu của cùng một dự án ---------- */
   var JR = { von: ['Vốn gia đình bỏ vào', 'chi'], gop: ['Nhận vốn góp', 'thu'], vay: ['Vay / mượn', 'thu'], tra: ['Trả gốc / hoàn vốn', 'chi'], lai: ['Trả lãi / chia lời', 'chi'], cp: ['Chi phí dự án', 'chi'], dt: ['Doanh thu / lợi nhuận', 'thu'] };
   function guessJr(t, c, n) {
@@ -2214,7 +2243,7 @@ var AL = (function () {
   }
   $('pjL').onchange = function (e) { var t = e.target; if (t.dataset.i !== undefined) PJ.L[+t.dataset.i].on = t.checked; if (t.dataset.j !== undefined) { PJ.L[+t.dataset.j].jr = t.value; PJ.L[+t.dataset.j].on = true; paintPj(); } };
   $('pjGo').onclick = function () {
-    var sel = PJ.L.filter(function (f) { return f.on; }); hide('pjM'); if (!sel.length) return;
+    var sel = PJ.L.filter(function (f) { return f.on; }); if (srvBlock()) return; hide('pjM'); if (!sel.length) return;
     sel.forEach(function (f) { f.r.j = PJ.n; f.r.jr = f.jr; }); render();
     callScript({ action: 'updMany', rows: sel.map(function (f) { return clean(f.r); }) }).then(function (j) {
       if (!j || !j.ok) throw new Error((j && j.error) || 'Không lưu được'); saveCfg(); toast('Đã thêm ' + sel.length + ' khoản vào ' + PJ.n);
@@ -2283,9 +2312,10 @@ var AL = (function () {
   // thẻ Vay nợ trong Báo cáo (Cả nhà: gộp nợ bên ngoài của hai người, bỏ vay qua lại giữa vợ chồng)
   function noSection() {
     var all = S.rrAll, L = all ? noBook('c').concat(noBook('v')).filter(function (o) { return o.kind !== 'vc'; }) : noBook(S.me);
-    if (!L.length) return '';
+    var w = srvOld() ? srvWarn() : '';
+    if (!L.length) return w + '<div class="card noc"><h3>Vay nợ<small>vay cá nhân, ngân hàng, vợ chồng</small></h3><div class="help">Chưa ghi khoản vay nào. Tiền vay không tính là thu, trả nợ không tính là chi, app theo dõi còn nợ ai bao nhiêu.</div><div class="pjb"><button class="sb p" data-nobook>Mở sổ vay nợ</button></div></div>';
     var T = noTot(L), open = L.filter(function (o) { return o.owe > 0 || o.due > 0; });
-    return '<div class="card noc"><h3>Vay nợ<small>' + (all ? 'cả nhà, chỉ tính vay bên ngoài' : 'tính đến hôm nay') + '</small></h3>' +
+    return w + '<div class="card noc"><h3>Vay nợ<small>' + (all ? 'cả nhà, chỉ tính vay bên ngoài' : 'tính đến hôm nay') + '</small></h3>' +
       '<div class="pjg"><div><small>Đang nợ</small><b class="neg">' + mk(short(T.owe)) + '</b></div><div><small>Cho vay chưa thu</small><b>' + mk(short(T.due)) + '</b></div></div>' +
       '<div class="nol">' + open.slice(0, 6).map(noLine).join('') + '</div>' +
       '<div class="pjb"><button class="sb p" data-nobook>Mở sổ vay nợ</button></div></div>';
@@ -2302,7 +2332,12 @@ var AL = (function () {
   });
   // sổ vay nợ
   function openNoB() { paintNoB(); show('noM'); }
+  function eyeIc() { return '<svg class="i" viewBox="0 0 24 24">' + (S.hide ? EYE_OFF : EYE_ON) + '</svg>'; }
+  function noEye() { S.hide = !S.hide; render(); if (!$('noM').classList.contains('hide')) paintNoB(); if (!$('nlM').classList.contains('hide') && NOL) openNoL(NOL.k, true); }
+  $('noEye').onclick = noEye; $('nlEye').onclick = noEye;
+  $('noS').onclick = function () { if (S.hide) noEye(); }; $('nlS').onclick = function () { if (S.hide) noEye(); };
   function paintNoB() {
+    $('noEye').innerHTML = eyeIc(); $('noOld').innerHTML = srvOld() ? srvWarn() : '';
     var L = noBook(S.me), T = noTot(L), open = L.filter(function (o) { return o.owe > 0 || o.due > 0; }), done = L.filter(function (o) { return o.owe <= 0 && o.due <= 0; });
     var cv = noConvList();
     $('noS').innerHTML = '<div><small>Đang nợ</small><b class="neg">' + mk(fmt(T.owe)) + ' đ</b></div><div><small>Cho vay chưa thu</small><b>' + mk(fmt(T.due)) + ' đ</b></div>' + (T.lai ? '<div class="w2"><small>Lãi đã trả</small><b>' + mk(fmt(T.lai)) + ' đ</b></div>' : '');
@@ -2315,8 +2350,8 @@ var AL = (function () {
   $('noAdd2').onclick = function () { hide('noM'); openNo(null, { v: 'cho' }); };
   // chi tiết một người cho vay
   var NOL = null;
-  function openNoL(k) {
-    var o = noBook(S.me).find(function (x) { return x.k === k; }); if (!o) return; NOL = o;
+  function openNoL(k, keep) {
+    var o = noBook(S.me).find(function (x) { return x.k === k; }); if (!o) return; NOL = o; $('nlEye').innerHTML = eyeIc();
     $('nlT').textContent = o.name;
     $('nlS').innerHTML = (o.vay ? '<div><small>Đã vay</small><b>' + mk(fmt(o.vay)) + '</b></div><div><small>Đã trả gốc</small><b>' + mk(fmt(o.tra)) + '</b></div><div class="w2"><small>Còn nợ</small><b class="neg big">' + mk(fmt(Math.max(0, o.owe))) + ' đ</b></div>' + (o.lai ? '<div class="w2"><small>Lãi đã trả (đã tính vào chi)</small><b>' + mk(fmt(o.lai)) + '</b></div>' : '') : '') +
       (o.cho ? '<div><small>Đã cho vay</small><b>' + mk(fmt(o.cho)) + '</b></div><div><small>Đã thu về</small><b>' + mk(fmt(o.thu)) + '</b></div><div class="w2"><small>Còn phải thu</small><b class="big">' + mk(fmt(Math.max(0, o.due))) + ' đ</b></div>' + (o.laiN ? '<div class="w2"><small>Lãi đã nhận (đã tính vào thu)</small><b>' + mk(fmt(o.laiN)) + '</b></div>' : '') : '');
@@ -2325,7 +2360,7 @@ var AL = (function () {
     if (o.cho) { bt.push(['thu', 'Thu nợ', o.due > 0]); bt.push(['cho', 'Cho vay thêm']); }
     $('nlB').innerHTML = bt.map(function (x) { return '<button class="sb' + (x[2] ? ' p' : '') + '" data-nv="' + x[0] + '">' + x[1] + '</button>'; }).join('');
     $('nlL').innerHTML = o.rows.slice().sort(function (a, b) { return a.d < b.d ? 1 : a.d > b.d ? -1 : 0; }).map(function (r) { return liHtml(r, true); }).join('');
-    hide('noM'); show('nlM');
+    if (!keep) { hide('noM'); show('nlM'); }
   }
   $('nlB').onclick = function (e) { var b = e.target.closest('[data-nv]'); if (!b || !NOL) return; hide('nlM'); openNo(null, { v: b.dataset.nv, kind: NOL.kind, p: NOL.p }); };
   // form ghi / sửa
@@ -2387,6 +2422,7 @@ var AL = (function () {
   }
   $('nfSave').onclick = function () {
     var a = money($('nfA').value), L = money($('nfL').value), d = $('nfD').value, p = $('nfP').value.trim().replace(/\s+/g, ' '), vc = NO.kind === 'vc', msg = $('nfMsg');
+    if (srvBlock(msg)) return;
     if (!a) { msg.textContent = 'Nhập số tiền'; return; } if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) { msg.textContent = 'Chọn ngày'; return; }
     if (!vc && !p) { msg.textContent = 'Nhập tên ' + (NO.kind === 'nh' ? 'ngân hàng' : 'người ' + (NO.v === 'vay' || NO.v === 'tra' ? 'cho vay' : 'vay')); $('nfP').focus(); return; }
     if (vc && !S.users.vOn && !NO.r) { msg.textContent = 'Bật "Vợ chồng cùng dùng" trong Cài đặt trước'; return; }
@@ -2455,6 +2491,7 @@ var AL = (function () {
   $('ncL').addEventListener('change', function (e) { var w = e.target.closest('[data-i]'); if (!w) return; var f = NC[+w.dataset.i]; if (e.target.type === 'checkbox') f.on = e.target.checked; else f[e.target.dataset.f] = e.target.value; });
   $('ncGo').onclick = function () {
     var sel = NC.filter(function (f) { return f.on; }); if (!sel.length) { hide('ncM'); return; }
+    if (srvBlock($('ncMsg'))) return;
     var miss = sel.find(function (f) { return !f.p.trim(); }); if (miss) { $('ncMsg').textContent = 'Nhập tên người cho vay cho khoản "' + (miss.r.n || '') + '"'; return; }
     var olds = sel.map(function (f) { return clean(f.r); });
     sel.forEach(function (f) { var r = f.r, i = S.rows.indexOf(r); if (i >= 0) S.rows.splice(i, 1); r.v = r.t === 'thu' ? 'vay' : 'tra'; r.t = 'no'; r.c = NOK[f.k]; r.p = f.p.trim(); r.jr = ''; if (!r.w) r.w = guessW(r); S.moves.push(r); });
@@ -2508,7 +2545,7 @@ var AL = (function () {
   // Ghi ngay trên máy (hiện số liệu tức thì), gửi máy chủ chạy nền. Mất mạng / máy chủ chậm: khoản nằm trong hàng chờ
   // (cfg.out, lưu trong máy) và tự gửi lại khi có mạng / mở app – không mất, không phải nhập lại.
   var OUT_BUSY = false;
-  function outSave() { cfg.out = S.rows.concat(S.moves).filter(function (r) { return r._tmp; }).map(clean); saveCfg(); }
+  function outSave() { cfg.out = S.rows.concat(S.moves).filter(function (r) { return r._tmp; }).map(clean); try { localStorage.setItem(LS_OUT, JSON.stringify(cfg.out)); } catch (e) {} saveCfg(); }
   function saveRows(rows, okMsg) {
     rows.forEach(function (r) { r._tmp = 1; if (!r.u) r.u = S.me; r.at = r.at || nowTxt(); (isMv(r) ? S.moves : S.rows).push(r); });
     outSave(); render(); if (okMsg) toast(okMsg);
@@ -2602,6 +2639,7 @@ var AL = (function () {
     var v = ed.v, l = v.t === 'thu' ? S.cats.thu : S.cats.chi;
     if (!v.c) v.c = l[0];
     document.querySelectorAll('#edType button').forEach(function (b) { b.classList.toggle('on', b.dataset.v === v.t); });
+    $('edNo').classList.toggle('hide', !!ed.r); $('edType').style.gridTemplateColumns = ed.r ? '' : '1fr 1fr 1fr';
     document.querySelectorAll('#edWl button').forEach(function (b) { b.classList.toggle('on', b.dataset.w === v.w); });
     paintJ();
     $('edAw').className = 'edAmt ' + v.t;
@@ -2651,7 +2689,8 @@ var AL = (function () {
   }
   $('edXb').onclick = function () { var x = $('edX'), op = x.classList.toggle('hide'); this.setAttribute('aria-expanded', String(!op)); if (!op) x.scrollIntoView({ block: 'nearest' }); };
   $('edAs').onclick = function (e) { var b = e.target.closest('[data-a]'); if (!b) return; $('edA').value = fmt(+b.dataset.a); paintSugA(); $('edN').focus(); };
-  $('edType').onclick = function (e) { var b = e.target.closest('button'); if (!b || !ed) return; if (ed.v.t !== b.dataset.v) { ed.v.t = b.dataset.v; ed.v.c = ''; } paintEd(); };
+  $('edType').onclick = function (e) { var b = e.target.closest('button'); if (!b || !ed) return;
+    if (b.dataset.v === 'no') { var a0 = money($('edA').value || $('edA').textContent) || ed.v.a, n0 = $('edN').value; hide('edM'); openNo(null, { v: ed.v.t === 'chi' ? 'tra' : 'vay' }); if (a0) $('nfA').value = fmt(a0); if (n0) $('nfN').value = n0; paintNo(); return; } if (ed.v.t !== b.dataset.v) { ed.v.t = b.dataset.v; ed.v.c = ''; } paintEd(); };
   $('edC').onclick = function (e) {
     var b = e.target.closest('button'); if (!b) return;
     ed.keepScroll = true;
@@ -3405,11 +3444,12 @@ var AL = (function () {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').catch(function () {});
       navigator.serviceWorker.addEventListener('message', function (e) {
-        if (e.data === 'new-version') toast('Đã có bản app mới', 'Tải lại', function () { location.reload(); });
+        if (e.data === 'new-version') toast('Đã có bản app mới', 'Tải lại', function () { if (cfgT) saveCfgNow(); location.reload(); });
       });
     }
   }
-  document.addEventListener('visibilitychange', function () { if (document.hidden) { if (!S.hide) { S.hide = true; render(); } return; } if (cfg.token) load(true); });
+  window.addEventListener('pagehide', function () { if (cfgT) saveCfgNow(); });
+  document.addEventListener('visibilitychange', function () { if (document.hidden) { if (cfgT) saveCfgNow(); if (!S.hide) { S.hide = true; render(); } return; } if (cfg.token) load(true); });
   setInterval(function () { if (!document.hidden && cfg.token && !active) load(true); }, 60000);
 
   if (window.DEMO) { cfg.url = 'demo'; cfg.token = cfg.token || 'demo123'; }
