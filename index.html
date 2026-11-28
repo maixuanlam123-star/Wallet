@@ -257,7 +257,7 @@ h2.sec button{border:0;background:none;color:var(--pri);font-weight:600;font-siz
 .wal>button.walNo{display:flex;border-radius:14px;padding:11px 12px;font-size:13.5px;align-items:center;gap:8px;background:var(--card);box-shadow:var(--sh);color:var(--ink);font-weight:500}.walNo span{flex:1}.walNo b{font-weight:700}.walNo svg.i{width:18px;height:18px;color:var(--mut)}.walNo svg.i:first-child{color:#7a5af8}
 .seg4{grid-template-columns:repeat(4,1fr)}.seg4 button{padding-left:2px;padding-right:2px}
 .nos{display:grid;grid-template-columns:1fr 1fr;gap:8px}.nos>div{background:var(--soft);border-radius:12px;padding:10px 12px}.nos .w2{grid-column:1/-1}.nos small{display:block;color:var(--mut);font-size:12.5px}.nos b{font-size:16px}.nos b.big{font-size:22px}.nos .neg,.noc .neg,.nor .neg{color:var(--chi)}
-.nol{display:flex;flex-direction:column;margin-top:8px}.nor{display:flex;align-items:center;gap:10px;border:0;background:none;padding:10px 0;text-align:left;font:inherit;color:var(--ink);border-bottom:1px solid var(--line)}.nor:last-child{border-bottom:0}.nor .m{flex:1;min-width:0}.nor .m b,.nor .m small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nor small{color:var(--mut);font-size:12.5px}.nor .v{text-align:right}.nor .v small,.nor .v b{display:block}
+.nol{display:flex;flex-direction:column;margin-top:8px}.nor{display:flex;align-items:center;gap:10px;border:0;background:none;padding:10px 0;text-align:left;font:inherit;color:var(--ink);border-bottom:1px solid var(--line)}.nor:last-child{border-bottom:0}.nor .m{flex:1;min-width:0}.nor .m b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nor .m small{display:block;line-height:1.35}.nor small{color:var(--mut);font-size:12.5px}.nor .v{text-align:right}.nor .v small,.nor .v b{display:block}
 .nod{margin:14px 0 2px;font-size:12.5px;color:var(--mut);font-weight:600}
 .li .a.no{color:#7a5af8}
 .ncl{display:flex;flex-direction:column;gap:10px;margin:10px 0;max-height:55vh;overflow:auto}.ncr{background:var(--soft);border-radius:12px;padding:10px}.ncr label{display:flex;gap:10px;align-items:flex-start}.ncr label b,.ncr label small{display:block}.ncr small{color:var(--mut)}.ncf{display:grid;grid-template-columns:120px 1fr;gap:8px;margin-top:8px}
@@ -1029,7 +1029,7 @@ var AL = (function () {
 <script>
 (function () {
   'use strict';
-  var VER = '28/11/2026-n';
+  var VER = '28/11/2026-o';
   var SW_CACHE = 'thu-chi-v2'; // phải giống CACHE trong sw.js
   var LS = 'thu-chi-gd', LS_REV = 'thu-chi-gd-review', LS_TH = 'thu-chi-gd-theme';
   var THEMES = [['muc', 'Xanh dương', '#2448a8'], ['ngoc', 'Ngọc bích', '#0b8a75'], ['dao', 'Hồng đào', '#d0396f'],
@@ -1609,7 +1609,7 @@ var AL = (function () {
     var L = pjNames(), h = '<h2 class="sec"><span>Dự án</span><button id="pjNew">+ Dự án</button></h2>';
     if (!L.length) return h + '<div class="empty">Gom mọi khoản của một dự án (vốn gia đình bỏ vào, vốn góp, vay mượn, trả lãi, doanh thu) vào một chỗ. Các khoản dự án được tính riêng, không lẫn vào thu chi sinh hoạt.<br><button class="add2" id="pjNew2" style="margin:10px auto 0">+ Tạo dự án</button></div>';
     return h + L.map(function (n) {
-      var o = pjSum(n), m = function (lbl, v, cls) { return '<div><small>' + lbl + '</small><b class="' + (cls || '') + '">' + mk(short(v)) + '</b></div>'; };
+      var o = pjSum(n), m = function (lbl, v, cls) { return '<div><small>' + lbl + '</small><b class="' + (cls || '') + '">' + mk(fmt(v)) + '</b></div>'; };
       return '<div class="card pjc"><div class="pjt"><b>' + esc(n) + '</b><span class="pjs">' + o.k + ' khoản' + (o.from ? ', từ ' + dmy(o.from).slice(3) : '') + '</span><button class="pjeye" data-pjeye aria-label="' + (S.hide ? 'Hiện số liệu' : 'Ẩn số liệu') + '"><svg class="i" viewBox="0 0 24 24">' + (S.hide ? EYE_OFF : EYE_ON) + '</svg></button></div>' +
         '<div class="pjv">' + mk(fmt(o.vao)) + ' đ</div><div class="pjs">Tổng vốn đã vào dự án (gia đình + góp + vay)</div>' +
         '<div class="pjg">' + m('Gia đình bỏ vào', o.von) + m('Vốn góp nhận', o.gop) + m('Vay / mượn', o.vay) + m('Còn nợ vay', o.no, o.no > 0 ? 'neg' : '') +
@@ -2319,7 +2319,7 @@ var AL = (function () {
   function noTot(L) { var t = { owe: 0, due: 0, lai: 0 }; L.forEach(function (o) { t.owe += Math.max(0, o.owe); t.due += Math.max(0, o.due); t.lai += o.lai; }); return t; }
   function noBtn() {
     var L = noBook(S.me), T = noTot(L);
-    return '<button class="walN walNo" id="walNo">' + ic('debt') + '<span>' + (L.length ? 'Vay nợ: đang nợ <b>' + mk(short(T.owe)) + '</b>' + (T.due ? ', cho vay <b>' + mk(short(T.due)) + '</b>' : '') : 'Vay nợ: ghi khoản vay, trả nợ, cho vay') + '</span>' + ic('chev') + '</button>';
+    return '<button class="walN walNo" id="walNo">' + ic('debt') + '<span>' + (L.length ? 'Vay nợ: đang nợ <b>' + mk(fmt(T.owe)) + '</b>' + (T.due ? ', cho vay <b>' + mk(fmt(T.due)) + '</b>' : '') : 'Vay nợ: ghi khoản vay, trả nợ, cho vay') + '</span>' + ic('chev') + '</button>';
   }
   // thẻ Vay nợ trong Báo cáo (Cả nhà: gộp nợ bên ngoài của hai người, bỏ vay qua lại giữa vợ chồng)
   function noSection() {
@@ -2328,13 +2328,13 @@ var AL = (function () {
     if (!L.length) return w + '<div class="card noc"><h3>Vay nợ<small>vay cá nhân, ngân hàng, vợ chồng</small></h3><div class="help">Chưa ghi khoản vay nào. Tiền vay không tính là thu, trả nợ không tính là chi, app theo dõi còn nợ ai bao nhiêu.</div><div class="pjb"><button class="sb p" data-nobook>Mở sổ vay nợ</button></div></div>';
     var T = noTot(L), open = L.filter(function (o) { return o.owe > 0 || o.due > 0; });
     return w + '<div class="card noc"><h3>Vay nợ<small>' + (all ? 'cả nhà, chỉ tính vay bên ngoài' : 'tính đến hôm nay') + '</small></h3>' +
-      '<div class="pjg"><div><small>Đang nợ</small><b class="neg">' + mk(short(T.owe)) + '</b></div><div><small>Cho vay chưa thu</small><b>' + mk(short(T.due)) + '</b></div></div>' +
+      '<div class="pjg"><div><small>Đang nợ</small><b class="neg">' + mk(fmt(T.owe)) + '</b></div><div><small>Cho vay chưa thu</small><b>' + mk(fmt(T.due)) + '</b></div></div>' +
       '<div class="nol">' + open.slice(0, 6).map(noLine).join('') + '</div>' +
       '<div class="pjb"><button class="sb p" data-nobook>Mở sổ vay nợ</button></div></div>';
   }
   function noLine(o) {
     var s = o.owe > 0 ? 'Còn nợ' : o.due > 0 ? 'Còn cho vay' : 'Đã xong', v = o.owe > 0 ? o.owe : o.due;
-    var sub2 = o.vay ? 'vay ' + mk(short(o.vay)) + ', đã trả ' + mk(short(o.tra)) + (o.lai ? ', lãi ' + mk(short(o.lai)) : '') : 'cho vay ' + mk(short(o.cho)) + ', đã thu ' + mk(short(o.thu));
+    var sub2 = o.vay ? 'vay ' + mk(fmt(o.vay)) + ', đã trả ' + mk(fmt(o.tra)) + (o.lai ? ', lãi ' + mk(fmt(o.lai)) : '') : 'cho vay ' + mk(fmt(o.cho)) + ', đã thu ' + mk(fmt(o.thu));
     return '<button class="nor" data-nok="' + esc(o.k) + '">' + tile(o.kind === 'nh' ? 'bank' : o.kind === 'vc' ? 'heart' : 'user', o.owe > 0 ? '#7a5af8' : o.due > 0 ? '#f79009' : '#98a2b3') +
       '<span class="m"><b>' + esc(o.name) + '</b><small>' + NOK[o.kind] + ', ' + sub2 + '</small></span><span class="v"><small>' + s + '</small><b class="' + (o.owe > 0 ? 'neg' : '') + '">' + (v ? mk(fmt(v)) : '0') + '</b></span></button>';
   }
@@ -2412,7 +2412,7 @@ var AL = (function () {
     $('nfPL').innerHTML = noBook(S.me).filter(function (o) { return o.kind === NO.kind; }).map(function (o) { return '<option value="' + esc(o.name) + '">'; }).join('');
     var back = NO.v === 'tra' || NO.v === 'thu';
     var rest = back ? noRest(NO.kind, $('nfP').value, NO.v, NO.r) : 0;
-    $('nfAll').classList.toggle('hide', !back || rest <= 0); $('nfAll').textContent = (NO.v === 'tra' ? 'Trả hết ' : 'Thu hết ') + short(rest);
+    $('nfAll').classList.toggle('hide', !back || rest <= 0); $('nfAll').textContent = (NO.v === 'tra' ? 'Trả hết ' : 'Thu hết ') + fmt(rest);
     $('nfLw').classList.toggle('hide', !back || vc || !!NO.r);
     $('nfLl').textContent = NO.v === 'tra' ? 'Tiền lãi trả kèm (nếu có, tính là khoản chi)' : 'Tiền lãi nhận kèm (nếu có, tính là khoản thu)';
     document.querySelectorAll('#nfW button').forEach(function (b) { b.classList.toggle('on', b.dataset.w === NO.w); });
