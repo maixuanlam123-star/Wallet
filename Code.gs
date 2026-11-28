@@ -8,10 +8,16 @@
  * Khoá Gemini: nhập trong app (Menu → Khoá đọc bill). Không cần sửa file này.
  */
 
-var VER = '24/11/2026-f'; // luôn giống VER trong index.html (máy chủ nạp từ GitHub dùng để biết có bản mới)
+var VER = '28/11/2026-e'; // luôn giống VER trong index.html (máy chủ nạp từ GitHub dùng để biết có bản mới)
 var SHEET = 'THU CHI GIA ĐÌNH';
-var HEAD = ['ID', 'Ngày', 'Loại', 'Mục', 'Số tiền', 'Nội dung', 'Nơi mua / Người nhận', 'Chi tiết', 'Nguồn', 'Thời gian nhập', 'Tiền mặt / Ngân hàng', 'Người ghi'];
+var HEAD = ['ID', 'Ngày', 'Loại', 'Mục', 'Số tiền', 'Nội dung', 'Nơi mua / Người nhận', 'Chi tiết', 'Nguồn', 'Thời gian nhập', 'Tiền mặt / Ngân hàng', 'Người ghi', 'Dự án', 'Vai trò trong dự án'];
+// vai trò của một khoản trong dự án (ghi chữ ra Sheet cho dễ đọc)
+var JROLE = { von: 'Vốn gia đình bỏ vào', gop: 'Nhận vốn góp', vay: 'Vay / mượn', tra: 'Trả gốc / hoàn vốn', lai: 'Trả lãi / chia lời', cp: 'Chi phí dự án', dt: 'Doanh thu / lợi nhuận' };
+function jrOf_(v) { var s = normVN_(v); for (var k in JROLE) if (s && (s === k || s === normVN_(JROLE[k]))) return k; return ''; }
 var NCOL = HEAD.length;
+// vay nợ: Loại = Vay / Trả nợ / Cho vay / Thu nợ, Mục = Cá nhân / Ngân hàng / Vợ chồng, Nơi mua / Người nhận = tên người cho vay
+var NOV = { vay: 'Vay', tra: 'Trả nợ', cho: 'Cho vay', thu: 'Thu nợ' };
+function novOf_(v) { var s = normVN_(v); return /^cho vay/.test(s) ? 'cho' : /^thu no/.test(s) ? 'thu' : /^tra no|^tra vay/.test(s) ? 'tra' : /^vay/.test(s) ? 'vay' : ''; }
 var DEFAULT_PASS = 'admin';
 var DEF_CATS = {
   chi: ['Ăn uống', 'Cà phê – trà sữa', 'Đi chợ – siêu thị', 'Điện nước – internet', 'Xăng xe – đi lại', 'Nhà cửa – đồ dùng',
@@ -191,6 +197,7 @@ function cleanList_(a, last) {
 // ngân sách riêng từng người (chồng 'budget', vợ 'budget_v')
 function budKey_() { return ME_ === 'v' ? 'budget_v' : 'budget'; }
 // số dư gốc của 2 ví (tiền mặt / ngân hàng), riêng từng người; số dư hiện tại = gốc + thu − chi ± chuyển (app tính)
+function projects_() { try { return JSON.parse(props_().getProperty('projects') || '[]') || []; } catch (e) { return []; } }
 function balKey_() { return ME_ === 'v' ? 'bal_v' : 'bal'; }
 function bal_() { try { var b = JSON.parse(props_().getProperty(balKey_()) || 'null'); if (b) return b; } catch (e) {} return null; }
 function budget_() {
@@ -201,7 +208,8 @@ function budget_() {
 function cfgSet_(b) {
   var P = props_(), res = { ok: true };
   bump_();
-  if (b.bal) { var bl = { tm: numOf_(b.bal.tm) * (/^-/.test(String(b.bal.tm)) ? -1 : 1), nh: numOf_(b.bal.nh) * (/^-/.test(String(b.bal.nh)) ? -1 : 1) }; P.setProperty(balKey_(), JSON.stringify(bl)); res.bal = bl; }
+  if (b.projects) { var pl = []; b.projects.forEach(function (n) { n = String(n || '').trim().slice(0, 60); if (n && pl.indexOf(n) < 0) pl.push(n); }); P.setProperty('projects', JSON.stringify(pl)); res.projects = pl; }
+  if (b.bal) { var sg = function (v) { return Math.abs(numOf_(v)) * (/^\s*-/.test(String(v)) ? -1 : 1); }, bl = { tm: sg(b.bal.tm), nh: sg(b.bal.nh) }; /* số dư gốc có thể âm */ P.setProperty(balKey_(), JSON.stringify(bl)); res.bal = bl; }
   if (b.budget) {
     var cl = { total: Math.max(0, numOf_(b.budget.total)), cats: {} };
     Object.keys(b.budget.cats || {}).slice(0, 40).forEach(function (k) {
@@ -581,10 +589,11 @@ function numOf_(v) {
 function newId_() { return Utilities.getUuid().replace(/-/g, '').slice(0, 10); }
 
 function rowOut_(r, tz) {
-  return {
+  var nv = novOf_(r[2]);
+  var o = {
     id: String(r[0]),
     d: isoOf_(r[1], tz),
-    t: /chuy|rut|nop/i.test(normVN_(r[2])) ? 'ck' : /thu/i.test(String(r[2])) ? 'thu' : 'chi', // ck = chuyển giữa tiền mặt và ngân hàng
+    t: nv ? 'no' : /chuy|rut|nop/i.test(normVN_(r[2])) ? 'ck' : /thu/i.test(String(r[2])) ? 'thu' : 'chi', // ck = chuyển giữa tiền mặt và ngân hàng
     c: String(r[3] || ''),
     a: Math.abs(numOf_(r[4])),
     n: String(r[5] || ''),
@@ -593,8 +602,11 @@ function rowOut_(r, tz) {
     s: /bill|ảnh/i.test(String(r[8])) ? 'bill' : 'tay',
     at: r[9] instanceof Date ? Utilities.formatDate(r[9], tz, 'dd/MM/yyyy HH:mm') : String(r[9] || ''),
     w: walOf_(r[10]),
-    u: /^v/i.test(normVN_(r[11])) ? 'v' : 'c'   // để trống = chồng (chủ sổ)
+    u: /^v/i.test(normVN_(r[11])) ? 'v' : 'c',  // để trống = chồng (chủ sổ)
+    j: String(r[12] || '').trim(), jr: r[12] && !nv ? jrOf_(r[13]) : ''
   };
+  if (nv) o.v = nv;
+  return o;
 }
 
 // nguồn tiền: 'tm' tiền mặt, 'nh' ngân hàng (gồm thẻ, chuyển khoản, ví điện tử), '' chưa ghi
@@ -604,7 +616,7 @@ function rowIn_(o) {
   return [
     String(o.id || newId_()),
     dateOf_(o.d),
-    o.t === 'ck' ? 'Chuyển' : o.t === 'thu' ? 'Thu' : 'Chi',
+    o.t === 'no' ? (NOV[o.v] || 'Vay') : o.t === 'ck' ? 'Chuyển' : o.t === 'thu' ? 'Thu' : 'Chi',
     String(o.c || '').slice(0, 60),
     Math.abs(numOf_(o.a)),
     String(o.n || '').slice(0, 300),
@@ -613,7 +625,8 @@ function rowIn_(o) {
     src,
     Utilities.formatDate(new Date(), tz_(), 'dd/MM/yyyy HH:mm'),
     o.w === 'tm' ? 'Tiền mặt' : o.w === 'nh' ? 'Ngân hàng' : '',
-    (o.u || ME_) === 'v' ? 'Vợ' : 'Chồng'
+    (o.u || ME_) === 'v' ? 'Vợ' : 'Chồng',
+    String(o.j || '').trim().slice(0, 60), o.j && o.t !== 'no' ? (JROLE[o.jr] || '') : ''
   ];
 }
 
@@ -635,7 +648,7 @@ function list_(gen) {
     if (fix.length) bump_();
   }
   return {
-    ok: true, gen: gen_(), rows: rows, me: ME_, users: users_(), cats: cats_(), budget: budget_(), bal: bal_(), pgen: pgen_(), events: events_(), calOn: props_().getProperty('calOn') === '1', ver: VER,
+    ok: true, gen: gen_(), rows: rows, me: ME_, users: users_(), cats: cats_(), budget: budget_(), bal: bal_(), projects: projects_(), pgen: pgen_(), events: events_(), calOn: props_().getProperty('calOn') === '1', ver: VER,
     hasKey: !!props_().getProperty('gemKey'),
     model: props_().getProperty('gemModel') || ''
   };
@@ -721,7 +734,7 @@ function placeHistory_() {
   var sh = sheet_(), n = sh.getLastRow() - 1, map = {};
   if (n <= 0) return map;
   sh.getRange(2, 1, n, NCOL).getValues().forEach(function (r) {
-    if (!r[6] || /thu|chuy/i.test(normVN_(r[2]))) return;
+    if (!r[6] || /thu|chuy|vay|no/i.test(normVN_(r[2]))) return;
     var b = brandOf_(r[6]), key = b ? 'b:' + b.n : 'p:' + normVN_(r[6]);
     var o = map[key] || (map[key] = {}); o[r[3]] = (o[r[3]] || 0) + 1;
   });
